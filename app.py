@@ -1,1 +1,2 @@
-print('Hi!')
+print('Hi friends!')
+print('Commit!')
