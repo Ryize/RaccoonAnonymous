@@ -1,1 +1,1 @@
-print("rom")
+print("rom hello my friends!")
