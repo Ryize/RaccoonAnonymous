@@ -1,6 +1,5 @@
 print("TEST@")
 print("TEST@")
-print("Hi@")
 print("TEST@")
 print("TEST@")
 print("TEST@")
