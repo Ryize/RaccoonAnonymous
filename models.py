@@ -3,6 +3,8 @@ from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from app import db
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,3 +18,6 @@ class Message(db.Model):
     login = db.Column(db.String(32), unique=True, nullable=False)
     text = db.Column(db.String(2500), nullable=False)
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+db.create_all()  # Создаёт таблицы, если ещё не созданы
