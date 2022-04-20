@@ -26,7 +26,8 @@ class User(db.Model, UserMixin):
                  или ValueError(Если переданные данные не str, недостаточной или слишком большой длинны).
         """
         # Проверка на кооректность переданных значений
-        if not isinstance(login, str) or not isinstance(password, str) or not 3 < len(login) < 33 or not 3 < len(password) < 97:
+        if not isinstance(login, str) or not isinstance(password, str) or not 3 < len(login) < 33 or not 3 < len(
+                password) < 97:
             raise ValueError('Логин или пароль недостаточной длинны. Либо не верный тип данных')
         email = generate_password_hash(login)  # Если такого логина не существует, мы можем ожидать, что передали email
         user = User.query.filter_by(login=login).first() or User.query.filter_by(email=email).first()
@@ -37,6 +38,7 @@ class User(db.Model, UserMixin):
 
     def signup(self):
         pass
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
