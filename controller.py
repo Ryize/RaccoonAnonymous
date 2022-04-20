@@ -1,14 +1,18 @@
 from flask import render_template, request, flash, url_for, redirect, session
 from app import app
+from models import User, Message
 
 
 @app.route('/')
 def index():
+    print("!")
     return render_template("index.html")
 
 
 @app.route('/registration')
 def registration():
+    print("!")
+    User.login('2ss', '2sssss')
     return render_template("registration.html")
 
 
