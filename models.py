@@ -66,6 +66,7 @@ class User(db.Model, UserMixin):
         return new_user
 
 
+
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), unique=True, nullable=False)

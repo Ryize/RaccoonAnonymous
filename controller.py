@@ -7,12 +7,18 @@ from models import User, Message
 
 @app.route('/')
 def index():
-    print("!")
     return render_template("index.html")
 
 
-@app.route('/registration')
+@app.route('/registration', methods=['POST', 'GET'])
 def registration():
+    if request.method == 'POST':
+        rec = request.form
+        if not 3 < len(rec.get('name')) < 33 or not 3 < len(rec.get('password')) < 33:
+            flash('Ваш логин должен быть не менее 3-х символов и не более 33', 'error')
+        else:
+            flash('Вы успешно зарегистрировались!', 'success')
+            return render_template('user_page.html')
     return render_template("registration.html")
 
 

@@ -2,11 +2,13 @@ from flask import Flask
 from flask import Flask, flash, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_toastr import Toastr
 
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+toastr = Toastr(app)
 app.config['SECRET_KEY']: str = 'bgcegy3yg2d3ue2uwccuby2ubwcchjsbgvcwcuwbc2whbu11'
 app.config['SQLALCHEMY_DATABASE_URI']: str = 'sqlite:///bd.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']: bool = True
