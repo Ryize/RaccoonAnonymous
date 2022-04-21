@@ -66,7 +66,7 @@ class User(db.Model, UserMixin):
 
         db.session.add(new_user)
         db.session.commit()
-        if auto_login: login_user(user)  # Авторизовать пользователя
+        if auto_login: login_user(new_user)  # Авторизовать пользователя
         return new_user
 
     def login(self):
