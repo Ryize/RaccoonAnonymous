@@ -1,3 +1,6 @@
+from random import randint
+
+
 from datetime import datetime
 from typing import Union, Optional
 
@@ -13,11 +16,11 @@ from app import db, login_manager
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), unique=True, nullable=False)
-    password = db.Column(db.String(96), nullable=False)
-    email = db.Column(db.String(96), unique=True, nullable=True)
+    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text, unique=True, nullable=True)
 
     @staticmethod
-    def login(login: str, password: str) -> Union[bool, ValueError]:
+    def login_user(login: str, password: str) -> Union[bool, ValueError]:
         """
         Метод для авторизаии пользователя.
         :param: login(str, логин пользователя, 3 < login < 33)
@@ -54,16 +57,20 @@ class User(db.Model, UserMixin):
         if user: raise RuntimeError('Такой пользователь уже существует!')
 
         # Проверка на кооректность переданных значений
-        if not isinstance(login, str) or not isinstance(password, str) or isinstance(auto_login ,bool) or not 3 < len(login) < 33 or not 3 < len(password) < 97 or not 3 < len(str(email)) < 97:
+        if not isinstance(login, str) or not isinstance(password, str) or not isinstance(auto_login ,bool) or not 3 < len(login) < 33 or not 3 < len(password) < 97 or (len(email) > 0 and not 3 < len(email) < 97):
             raise ValueError('Логин или пароль недостаточной длинны. Либо не верный тип данных')
+        email = email or None
 
         new_user = User(email=email, login=login,
                         password=generate_password_hash(password, method='sha512'))  # Создание нового пользователя
 
         db.session.add(new_user)
         db.session.commit()
-        if auto_login: login_user(user)  # Авторизовать пользователя
+        if auto_login: login_user(new_user)  # Авторизовать пользователя
         return new_user
+
+    def login(self):
+        pass
 
 
 

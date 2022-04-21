@@ -18,6 +18,7 @@ def registration():
             flash('Ваш логин должен быть не менее 3-х символов и не более 33', 'error')
         else:
             flash('Вы успешно зарегистрировались!', 'success')
+            User.register(rec.get('name'), rec.get('password'), rec.get('email'))
             return render_template('user_page.html')
     return render_template("registration.html")
 
