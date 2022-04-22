@@ -73,12 +73,21 @@ class User(db.Model, UserMixin):
         pass
 
 
-
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), unique=True, nullable=False)
     text = db.Column(db.String(2500), nullable=False)
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Contacts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    friend_id = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def last_contacts(self):
+        pass
 
 
 db.create_all()  # Создаёт таблицы, если ещё не созданы
@@ -87,3 +96,4 @@ db.create_all()  # Создаёт таблицы, если ещё не созд�
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
