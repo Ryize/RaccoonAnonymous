@@ -15,12 +15,12 @@ from app import db, login_manager
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(32), unique=True, nullable=False)
+    name = db.Column(db.String(32), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, unique=True, nullable=True)
 
     @staticmethod
-    def login_user(login: str, password: str) -> Union[bool, ValueError]:
+    def login_user(name: str, password: str) -> Union[bool, ValueError]:
         """
         Метод для авторизаии пользователя.
         :param: login(str, логин пользователя, 3 < login < 33)
@@ -29,18 +29,18 @@ class User(db.Model, UserMixin):
                  или ValueError(Если переданные данные не str, недостаточной или слишком большой длинны).
         """
         # Проверка на кооректность переданных значений
-        if not isinstance(login, str) or not isinstance(password, str) or not 3 < len(login) < 33 or not 3 < len(
+        if not isinstance(name, str) or not isinstance(password, str) or not 3 < len(name) < 33 or not 3 < len(
                 password) < 97:
             raise ValueError('Логин или пароль недостаточной длинны. Либо не верный тип данных')
-        email = generate_password_hash(login, method='sha512')  # Если такого логина не существует, мы можем ожидать, что передали email
-        user = User.query.filter_by(login=login).first() or User.query.filter_by(email=email).first()
+        email = generate_password_hash(name, method='sha512')  # Если такого логина не существует, мы можем ожидать, что передали email
+        user = User.query.filter_by(name=name).first() or User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
             return True
         return False
 
     @staticmethod
-    def register(login: str, password: str, email: Optional[str] = None,
+    def register(name: str, password: str, email: Optional[str] = None,
                  auto_login: bool = True) -> Union[ValueError, RuntimeError]:
         """
         Метод для регистрации пользователя.
@@ -53,15 +53,15 @@ class User(db.Model, UserMixin):
                  или ValueError(Если переданные данные не str, недостаточной или слишком большой длинны).
         """
 
-        user = User.query.filter_by(login=login).first() or User.query.filter_by(email=email).first()
+        user = User.query.filter_by(name=name).first() or User.query.filter_by(email=email).first()
         if user: raise RuntimeError('Такой пользователь уже существует!')
 
         # Проверка на кооректность переданных значений
-        if not isinstance(login, str) or not isinstance(password, str) or not isinstance(auto_login ,bool) or not 3 < len(login) < 33 or not 3 < len(password) < 97 or (len(email) > 0 and not 3 < len(email) < 97):
+        if not isinstance(name, str) or not isinstance(password, str) or not isinstance(auto_login ,bool) or not 3 < len(name) < 33 or not 3 < len(password) < 97 or (len(email) > 0 and not 3 < len(email) < 97):
             raise ValueError('Логин или пароль недостаточной длинны. Либо не верный тип данных')
         email = email or None
 
-        new_user = User(email=email, login=login,
+        new_user = User(email=email, name=name,
                         password=generate_password_hash(password, method='sha512'))  # Создание нового пользователя
 
         db.session.add(new_user)

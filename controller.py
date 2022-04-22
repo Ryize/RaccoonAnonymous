@@ -23,8 +23,17 @@ def registration():
     return render_template("registration.html")
 
 
-@app.route('/authorisation')
+@app.route('/authorisation', methods=['POST', 'GET'])
 def authorisation():
+    if request.method == 'POST':
+        rec = request.form
+        print(rec.get('name'), rec.get('password'))
+        if not 3 < len(rec.get('name')) < 33 or not 3 < len(rec.get('password')) < 33:
+            flash('Ваш логин должен быть не менее 3-х символов и не более 33', 'error')
+        if not User.login_user(rec.get('name'), rec.get('password')):
+            flash('Неверный логин или пароль.', 'error')
+        else:
+            return render_template('user_page.html')
     return render_template("authorisation.html")
 
 
