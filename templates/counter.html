@@ -1,0 +1,39 @@
+<script>
+    $(document).ready(function () {
+        $("text").limit("#charsLeft", 500); // и число не строкой
+    });
+    $('textarea').keyup(function () {
+
+        var characterCount = $(this).val().length,
+            current = $('#current'),
+            maximum = $('#maximum'),
+            theCount = $('#the-count');
+
+        current.text(characterCount);
+
+        if (characterCount < 70) {
+            current.css('color', '#555');
+        }
+        if (characterCount > 600 && characterCount < 800) {
+            current.css('color', '#600000');
+        }
+        if (characterCount > 800 && characterCount < 900) {
+            current.css('color', '#700000');
+        }
+        if (characterCount > 900 && characterCount < 950) {
+            current.css('color', '#c00');
+        }
+        if (characterCount > 950 && characterCount < 1000) {
+            current.css('color', '#d00');
+        }
+        if (characterCount > 999) {
+            current.css('color', '#e00');
+            maximum.css('color', '#e00');
+            current.css('color', '#e00');
+            theCount.css('font-weight', 'bold');
+        } else {
+            maximum.css('color', '#666');
+            theCount.css('font-weight', 'normal');
+        }
+    });
+</script>

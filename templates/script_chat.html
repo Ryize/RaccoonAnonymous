@@ -1,0 +1,63 @@
+<script>
+    function auto_size_textarea() {
+    var textarea = document.getElementById("text");
+    var heightLimit = 200; /* Maximum height: 200px */
+    window.stick = false
+    textarea.oninput = function () {
+        textarea.style.height = ""; /* Reset the height*/
+        textarea.style.height = Math.min(textarea.scrollHeight, heightLimit) + "px";
+    };
+    document.getElementById("check_night").addEventListener("click", function () {
+        document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
+    });
+    document.getElementById("check_stick").addEventListener("click", function () {
+        window.stick = !window.stick
+    });
+}
+    var socket;
+    $(document).ready(function () {
+        auto_size_textarea()
+        socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+        addEventListener("keyup", function (event) {
+            // Число 13 в "Enter" и клавиши на клавиатуре
+            if (event.keyCode === 13 && !event.shiftKey) {
+                event.preventDefault();
+                if (document.getElementById('text').value.replace(/\s{2,}/g, '').length > 1) {
+                    document.getElementById('current').innerHTML = '0';
+                    // Отмена действия по умолчанию
+                    text = $('#text').val();
+                    $('#text').val('');
+                    socket.emit('text', {msg: text, room: '{{room}}'});
+                }
+            }
+        });
+        socket.on('connect', function () {
+            socket.emit('join', {room: '{{ room }}'});
+        });
+        socket.on('status_join', function (data) {
+            $('#chat').val($('#chat').val() + data.msg + '\n');
+            $('#chat').scrollTop($('#chat')[0].scrollHeight);
+        });
+        socket.on('message', function (data) {
+            let msg = document.createElement('div');
+            let inner = document.getElementById('chat');
+            msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
+            msg.style = 'font-size: 125%; word-wrap: break-word;'
+            inner.appendChild(msg);
+            inner.appendChild(document.createElement('br'))
+
+            if (window.stick) {
+                var myDiv = document.getElementById("chat");
+                myDiv.scrollTop = document.getElementById("chat").scrollHeight
+            }
+        });
+        $('#send').click(function (e) {
+            if (document.getElementById('text').value.replace(/\s{2,}/g, ' ').length > 1) {
+                document.getElementById('current').innerHTML = '0';
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, room: '{{room}}'});
+            }
+        });
+    });
+</script>
