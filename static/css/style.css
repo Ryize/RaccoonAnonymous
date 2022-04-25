@@ -13,3 +13,8 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
 .bg-image img{
    height: 30vh;
 }
+
+.ava {
+   overflow:hidden;
+   height:800px
+}
