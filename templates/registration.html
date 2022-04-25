@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Registration
-{% endblock %}
-
+{% block title %} Registration {% endblock %}
 {% block body %}
-
 <section class="vh-100 gradient-custom">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -16,23 +11,23 @@ Registration
               <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
               <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль!</p>
               <form method="post">
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="name" id="name"/>
-                <label class="form-label">Логин</label>
-              </div>
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="password" id="password"/>
-                <label class="form-label">Пароль</label>
-              </div>
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="email" id="email"/>
-                <label class="form-label">При желании добавьте почту</label>
-              </div>
-              <div class="col-md-12 form-group">
+                <div class="form-outline form-white mb-4">
+                  <input type="text" class="form-control form-control-lg" name="name" id="name"/>
+                  <label class="form-label">Логин</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" class="form-control form-control-lg" name="password" id="password"/>
+                  <label class="form-label">Пароль</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" class="form-control form-control-lg" name="email" id="email"/>
+                  <label class="form-label">При желании добавьте почту</label>
+                </div>
+                <div class="col-md-12 form-group">
                   <input type="submit" value="Зарегистрироваться" class="btn btn-light rounded-2 py-2 px-4">
                   <span class="submitting"></span>
-              </div>
-                </form>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -40,7 +35,6 @@ Registration
     </div>
   </div>
 </section>
-
 {% endblock %}
 
 

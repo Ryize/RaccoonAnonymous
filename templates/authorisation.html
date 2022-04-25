@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Authorisation
-{% endblock %}
+{% block title %} Authorisation {% endblock %}
 {% block body %}
 <section class="vh-100 gradient-custom">
   <div class="container py-5 h-100">
@@ -10,28 +7,22 @@ Authorisation
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="card bg-dark text-white" style="border-radius: 1rem;">
           <div class="card-body p-5 text-center">
-
             <div class="mb-md-5 mt-md-4 pb-5">
-
               <h2 class="fw-bold mb-2 text-uppercase">Авторизация</h2>
               <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль</p>
               <form method="post">
-              <div class="form-outline form-white mb-4">
-                <input type="text" id="name" class="form-control form-control-lg" name="name"/>
-                <label class="form-label">Логин</label>
-              </div>
-
-              <div class="form-outline form-white mb-4">
-                <input type="text" id="password" class="form-control form-control-lg" name="password"/>
-                <label class="form-label">Пароль</label>
-              </div>
-
-              <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Забыли пароль?</a></p>
-
-              <button class="btn btn-outline-light btn-lg px-5" type="submit">Авторизоваться</button>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" id="name" class="form-control form-control-lg" name="name"/>
+                  <label class="form-label">Логин</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" id="password" class="form-control form-control-lg" name="password"/>
+                  <label class="form-label">Пароль</label>
+                </div>
+                <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Забыли пароль?</a></p>
+                <button class="btn btn-outline-light btn-lg px-5" type="submit">Авторизоваться</button>
               </form>
             </div>
-
             <div>
               <p class="mb-0">У вас нет аккаунта? <a href="/registration" class="text-white-50 fw-bold">Зарегистрироваться</a>
               </p>

@@ -68,9 +68,8 @@ def logout():
 def redirect_to_sign(response):
     """
     Если пользователь не авторизован и пытается зайти на страницу для авторизованных(@login_required),
-    то функция перенаправит на страницу авторизации
+    то функция перенаправит на страницу авторизации.
     """
     if response.status_code == 401:
         return redirect(url_for('authorisation'))
-
     return response
