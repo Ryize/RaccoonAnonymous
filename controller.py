@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 from app import app, db, socketio, all_room, captcha
 from models import User, Message
+from buisness_logic import MessageControl
 
 
 @app.route('/')
@@ -74,6 +75,10 @@ def join(message):
 def text(message):
     room = message.get('room')
     msg = message['msg']
+    if User.query.filter_by(name=current_user.name).first().admin_status:
+        data = MessageControl(msg.replace('\n', '')).auto_command()
+        emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room')}, to=room)
+        return
     if len(message['msg'].replace(' ', '').replace('\n', '')) > 0 and len(msg) < 1000:
         new_message = Message(login=current_user.name, text=msg, room=room)
         db.session.add(new_message)
@@ -103,4 +108,5 @@ def redirect_to_sign(response):
     """
     if response.status_code == 401:
         return redirect(url_for('authorisation'))
+
     return response
