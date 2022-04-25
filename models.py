@@ -17,6 +17,10 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
+    ban_time = db.Column(db.DateTime, default=datetime.utcnow)
+    mute_time = db.Column(db.DateTime, default=datetime.utcnow)
+    warn = db.Column(db.Integer, default=0)
+    admin_status = db.Column(db.Boolean, default=False)
     email = db.Column(db.Text, unique=True, nullable=True)
 
     @staticmethod
