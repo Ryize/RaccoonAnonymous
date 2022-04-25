@@ -4,4 +4,244 @@
 User page
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+
+{% block scripts %}
+	{{ moment.include_moment() }}
+    {{ moment.lang('ru') }}
+{% endblock %}
+
+<html lang="en">
+<head>
+    <title>Чат анонимных енотов</title>
+    <!--Link to CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"
+            integrity="sha512-MgkNs0gNdrnOM7k+0L+wgiRc5aLgl74sJQKbIWegVIMvVGPc1+gc1L2oK9Wf/D9pq58eqIJAxOonYPVE5UwUFA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        function auto_size_textarea() {
+            var textarea = document.getElementById("text");
+            var heightLimit = 200; /* Maximum height: 200px */
+            window.stick = false
+
+            textarea.oninput = function () {
+                textarea.style.height = ""; /* Reset the height*/
+                textarea.style.height = Math.min(textarea.scrollHeight, heightLimit) + "px";
+            };
+            document.getElementById("check_night").addEventListener("click", function () {
+                document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
+            });
+            document.getElementById("check_stick").addEventListener("click", function () {
+                window.stick = !window.stick
+            });
+        }
+    </script>
+    <script type="text/javascript" charset="utf-8">
+        var socket;
+        $(document).ready(function () {
+            auto_size_textarea()
+            socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+            addEventListener("keyup", function (event) {
+                // Число 13 в "Enter" и клавиши на клавиатуре
+                if (event.keyCode === 13 && !event.shiftKey) {
+                    event.preventDefault();
+                    if (document.getElementById('text').value.replace(/\s{2,}/g, '').length > 1) {
+                        document.getElementById('current').innerHTML = '0';
+                        // Отмена действия по умолчанию
+                        text = $('#text').val();
+                        $('#text').val('');
+                        socket.emit('text', {msg: text, room: '{{room}}'});
+                    }
+                }
+            });
+            socket.on('connect', function () {
+                socket.emit('join', {room: '{{ room }}'});
+            });
+            socket.on('status_join', function (data) {
+                $('#chat').val($('#chat').val() + data.msg + '\n');
+                $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            });
+            socket.on('message', function (data) {
+                let msg = document.createElement('div');
+                let inner = document.getElementById('chat');
+                msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
+                msg.style = 'font-size: 125%; word-wrap: break-word;'
+                inner.appendChild(msg);
+                inner.appendChild(document.createElement('br'))
+
+                if (window.stick) {
+                    var myDiv = document.getElementById("chat");
+                    myDiv.scrollTop = document.getElementById("chat").scrollHeight
+                }
+            });
+            $('#send').click(function (e) {
+                if (document.getElementById('text').value.replace(/\s{2,}/g, ' ').length > 1) {
+                    document.getElementById('current').innerHTML = '0';
+                    text = $('#text').val();
+                    $('#text').val('');
+                    socket.emit('text', {msg: text, room: '{{room}}'});
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+<style>
+    @keyframes background {
+        100% {
+            background-position: 0 200px;
+        }
+    }
+
+    #send:hover {
+        background: linear-gradient(crimson, gold, yellowgreen, teal, crimson);
+        background-position: 0 0;
+        border-radius: 30px;
+        /*border: 10px solid white;*/
+        color: white;
+        animation: background 2s infinite alternate;
+    }
+
+    .kaesevua {
+        width: 100%;
+        height: 40px;
+        margin-bottom: 20px;
+        position: relative;
+
+    }
+
+    p {
+        font-family: "Open Sans", sans-serif;
+        line-height: 35px;
+        padding: 10px;
+        text-align: justify;
+        box-shadow: 0 0 20px rgba(0, 139, 253, 0.25);
+    }
+
+    .sicinga_pesamila {
+        background-color: #15181f;
+        color: #e5e5e5;
+    }
+
+    #nasukaola {
+        background-color: #ffffff;
+    }
+
+    .sicinga_pesamila #nasukaola:after {
+        background-color: transparent;
+        box-shadow: 10px 10px #15181f;
+        top: -4px;
+        left: 30px;
+    }
+
+    .counter {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+    }
+</style>
+<center>
+    <h1>Анонимный инот</h1>
+    <label>Комната : {{ room.replace('_', ' №') }}</label>
+</center>
+
+<label id="nasukaola"></label>
+<div class="form-switch kaesevua">
+    <label style="float: right; margin: 10px;">
+        <small>
+            <input class="form-check-input" type="checkbox" id="check_night">
+            <label class="form-check-label" for="check_night">Ночной режим</label>
+        </small>
+    </label><br><br>
+    <label style="float: right; margin: 10px;">
+        <small>
+            <input class="form-check-input" type="checkbox" id="check_stick">
+            <label class="form-check-label" for="check_stick">Следить за сообщениями</label>
+        </small>
+    </label>
+</div>
+<div class="row" id="row">
+    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+    <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
+         style="max-height: 77vh; height: 89vh; overflow: auto; border: 1px solid #ccc; padding: 10px">
+        <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label style="color: red">{{
+            room.replace('_', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь время!</label></div>
+        <br>
+        {% for msg in all_msg %}
+            <div style='font-size: 125%; word-wrap: break-word;'>
+                {{msg.login}}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>: &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row" style="margin-top: 25px;">
+    <div class="col-xs-1 col-sm-12 col-md-2 col-lg-2"></div>
+    {% if current_user.is_authenticated %}
+        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+                <textarea type="text" id="text" placeholder="Введите сообщение..."
+                          style="padding: 10px; border-radius: 5px; width: 93%; font-size: 115%;" autofocus maxlength="1000"></textarea>
+            <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+                 fill="currentColor"
+                 class="bi bi-arrow-right-circle" viewBox="0 0 16 16" id="send">
+                <path fill-rule="evenodd"
+                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+            </svg>
+            <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span id="maximum">/ 1000 </span></small></label>
+        </div>
+    {% else %}
+        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+            <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
+        </div>
+    {% endif %}
+</div>
+<br/><br/>
+<hr>
+<small style="margin: 30px;">© 2022 RaccoonAnonymous</small>
+<script>
+    $(document).ready(function () {
+        $("text").limit("#charsLeft", 500); // и число не строкой
+    });
+</script>
+<script>
+    $('textarea').keyup(function () {
+
+        var characterCount = $(this).val().length,
+            current = $('#current'),
+            maximum = $('#maximum'),
+            theCount = $('#the-count');
+
+        current.text(characterCount);
+
+        if (characterCount < 70) {
+            current.css('color', '#555');
+        }
+        if (characterCount > 600 && characterCount < 800) {
+            current.css('color', '#600000');
+        }
+        if (characterCount > 800 && characterCount < 900) {
+            current.css('color', '#700000');
+        }
+        if (characterCount > 900 && characterCount < 950) {
+            current.css('color', '#c00');
+        }
+        if (characterCount > 950 && characterCount < 1000) {
+            current.css('color', '#d00');
+        }
+        if (characterCount > 999) {
+            current.css('color', '#e00');
+            maximum.css('color', '#e00');
+            current.css('color', '#e00');
+            theCount.css('font-weight', 'bold');
+        } else {
+            maximum.css('color', '#666');
+            theCount.css('font-weight', 'normal');
+        }
+    });
+</script>
+</body>
+</html>
+{% endblock %}

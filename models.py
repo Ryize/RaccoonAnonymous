@@ -76,8 +76,9 @@ class User(db.Model, UserMixin):
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(32), unique=True, nullable=False)
+    login = db.Column(db.String(32), nullable=False)
     text = db.Column(db.String(2500), nullable=False)
+    room = db.Column(db.String(32), nullable=False)
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
 

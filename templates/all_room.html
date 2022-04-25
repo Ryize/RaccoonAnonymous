@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Все комнаты</title>
+</head>
+<body>
+<h1>
+    <center>Список комнат</center>
+</h1>
+
+{% for key, value in all_room.items() %}
+    {% for i in range(value) %}
+        <li>
+            <a href="{{ url_for('chat') }}?room={{ key }}_{{ loop.index }}">{{ key }} №'{{ loop.index }}</a>
+        </li>
+    {% endfor %}
+{% endfor %}
+</body>
+</html>
