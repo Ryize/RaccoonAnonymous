@@ -7,38 +7,45 @@ Registration
 {% block body %}
 
 <section class="vh-100 gradient-custom">
-  <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <div class="card bg-dark text-white" style="border-radius: 1rem;">
-          <div class="card-body p-5 text-center">
-            <div class="mb-md-5 mt-md-4 pb-5">
-              <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
-              <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль!</p>
-              <form method="post">
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="name" id="name"/>
-                <label class="form-label">Логин</label>
-              </div>
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="password" id="password"/>
-                <label class="form-label">Пароль</label>
-              </div>
-              <div class="form-outline form-white mb-4">
-                <input type="text" class="form-control form-control-lg" name="email" id="email"/>
-                <label class="form-label">При желании добавьте почту</label>
-              </div>
-              <div class="col-md-12 form-group">
-                  <input type="submit" value="Зарегистрироваться" class="btn btn-light rounded-2 py-2 px-4">
-                  <span class="submitting"></span>
-              </div>
-                </form>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+                            <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
+                            <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль!</p>
+                            <form method="post">
+                                <div class="form-outline form-white mb-4">
+                                    <input type="text" class="form-control form-control-lg" name="name" id="name"/>
+                                    <label class="form-label">Логин</label>
+                                </div>
+                                <div class="form-outline form-white mb-4">
+                                    <input type="text" class="form-control form-control-lg" name="password"
+                                           id="password"/>
+                                    <label class="form-label">Пароль</label>
+                                </div>
+                                <div class="form-outline form-white mb-4">
+                                    <input type="text" class="form-control form-control-lg" name="email" id="email"/>
+                                    <label class="form-label">При желании добавьте почту</label>
+                                </div>
+                                <div class="form-outline form-white mb-4" style="margin-top: 15%;">
+                                    {{ captcha() }}
+                                    <input style="margin-top: 10px;" type="text" class="form-control form-control-lg" name="captcha"/>
+                                    <label class="form-label">Капча</label>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <input type="submit" value="Зарегистрироваться"
+                                           class="btn btn-light rounded-2 py-2 px-4">
+                                    <span class="submitting"></span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </section>
 
 {% endblock %}
