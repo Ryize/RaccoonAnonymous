@@ -6,57 +6,61 @@
     <h1>Анонимный инот</h1>
     <label>Комната : {{ room.replace('_', ' №') }}</label>
   <label id="nasukaola"></label>
-  <div class="form-switch kaesevua">
-    <label style="float: right; margin: 10px;">
-      <small>
-        <input class="form-check-input" type="checkbox" id="check_night">
-        <label class="form-check-label" for="check_night">Ночной режим</label>
-      </small>
-    </label><br><br>
-    <label style="float: right; margin: 10px;">
-      <small>
-        <input class="form-check-input" type="checkbox" id="check_stick">
-        <label class="form-check-label" for="check_stick">Следить за сообщениями</label>
-      </small>
-    </label>
-  </div>
-  <div class="row" id="row">
-    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
-    <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
-         style="max-height: 77vh; height: 89vh; overflow: auto; border: 1px solid #ccc; padding: 10px">
-      <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label
-          style="color: red">{{ room.replace('_', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь
-        время!</label></div>
-      <br>
-      {% for msg in all_msg %}
-        <div style='font-size: 125%; word-wrap: break-word;'>
-          {{ msg.login }}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>: &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
-        </div>
-      {% endfor %}
+  {% if ban_time %}
+  <center>Вы заблокированны, оставшееся время блокировки: {{ ban_time }}!</center>
+  {% else %}
+    <div class="form-switch kaesevua">
+      <label style="float: right; margin: 10px;">
+        <small>
+          <input class="form-check-input" type="checkbox" id="check_night">
+          <label class="form-check-label" for="check_night">Ночной режим</label>
+        </small>
+      </label><br><br>
+      <label style="float: right; margin: 10px;">
+        <small>
+          <input class="form-check-input" type="checkbox" id="check_stick">
+          <label class="form-check-label" for="check_stick">Следить за сообщениями</label>
+        </small>
+      </label>
     </div>
-  </div>
-  <div class="row" style="margin-top: 25px;">
-    <div class="col-xs-1 col-sm-12 col-md-2 col-lg-2"></div>
-    {% if current_user.is_authenticated %}
-      <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-                <textarea type="text" id="text" placeholder="Введите сообщение..."
-                          style="padding: 10px; border-radius: 5px; width: 93%; font-size: 115%;" autofocus
-                          maxlength="1000"></textarea>
-        <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
-             fill="currentColor"
-             class="bi bi-arrow-right-circle" viewBox="0 0 16 16" id="send">
-          <path fill-rule="evenodd"
-                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
-        </svg>
-        <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span
-            id="maximum">/ 1000 </span></small></label>
+    <div class="row" id="row">
+      <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+      <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
+           style="max-height: 77vh; height: 89vh; overflow: auto; border: 1px solid #ccc; padding: 10px">
+        <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label
+            style="color: red">{{ room.replace('_', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь
+          время!</label></div>
+        <br>
+        {% for msg in all_msg %}
+          <div style='font-size: 125%; word-wrap: break-word;'>
+            {{ msg.login }}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>: &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
+          </div>
+        {% endfor %}
       </div>
-    {% else %}
-      <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-        <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
-      </div>
-    {% endif %}
-  </div>
+    </div>
+    <div class="row" style="margin-top: 25px;">
+      <div class="col-xs-1 col-sm-12 col-md-2 col-lg-2"></div>
+      {% if current_user.is_authenticated %}
+        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+                  <textarea type="text" id="text" placeholder="Введите сообщение..."
+                            style="padding: 10px; border-radius: 5px; width: 93%; font-size: 115%;" autofocus
+                            maxlength="1000"></textarea>
+          <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+               fill="currentColor"
+               class="bi bi-arrow-right-circle" viewBox="0 0 16 16" id="send">
+            <path fill-rule="evenodd"
+                  d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+          </svg>
+          <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span
+              id="maximum">/ 1000 </span></small></label>
+        </div>
+      {% else %}
+        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+          <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
   <br/><br/>
   <hr>
   <small style="margin: 30px;">© 2022 RaccoonAnonymous</small>

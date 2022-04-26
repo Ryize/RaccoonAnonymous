@@ -39,6 +39,9 @@
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
         });
         socket.on('message', function (data) {
+            if (data.ban === '{{ current_user.name }}'){
+                window.location.reload()
+            }
             let msg = document.createElement('div');
             let inner = document.getElementById('chat');
             msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
