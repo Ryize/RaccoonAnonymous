@@ -76,9 +76,17 @@ def text(message):
     room = message.get('room')
     msg = message['msg']
     if User.query.filter_by(name=current_user.name).first().admin_status:
-        data = MessageControl(msg.replace('\n', '')).auto_command()
-        emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room')}, to=room)
-        return
+        if len(msg.split()) == 4:
+            msg = msg.split()
+            if msg[3].lower() == 'this': msg[3] = room
+            msg = ' '.join(msg)
+        try:
+            data = MessageControl(msg.replace('\n', '')).auto_command()
+            emit('message', {'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
+            emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room')}, to=room)
+            return
+        except:
+            pass
     if len(message['msg'].replace(' ', '').replace('\n', '')) > 0 and len(msg) < 1000:
         new_message = Message(login=current_user.name, text=msg, room=room)
         db.session.add(new_message)

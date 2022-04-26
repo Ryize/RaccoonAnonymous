@@ -86,6 +86,13 @@ class Message(db.Model):
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class RoomBan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(32), nullable=False)
+    room = db.Column(db.String(32), nullable=False)
+    ban_end_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 db.create_all()  # Создаёт таблицы, если ещё не созданы
 
 

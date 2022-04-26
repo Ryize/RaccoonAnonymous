@@ -2,7 +2,9 @@ import time
 from datetime import datetime
 from typing import Optional
 from app import db
-from models import User
+from models import User, RoomBan
+
+from flask_login import current_user
 
 
 class MessageControl:
@@ -30,29 +32,42 @@ class MessageControl:
 
     def command_ban(self, login: str, _time: Optional[str] = None, *args, **kwargs):
         dt_object = self.__convert_time(_time)
-
         user = User.query.filter_by(name=login).first()
+        if not user:
+            raise RuntimeError('Пользователь не найден!')
         user.ban_time = dt_object
         db.session.add(user)
         db.session.commit()
-        return f'<label style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован на {_time}</label>'
+        time_ban = f'на {_time}'
+        if not _time: time_ban = f'навсегда'
+        return f'<label style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}</label>'
 
-    def command_rban(self, login: str, time: str, room: str, *args, **kwargs):
-        pass
+    def command_rban(self, login: str, room: str,  _time: Optional[str] = None, *args, **kwargs):
+        dt_object = self.__convert_time(_time)
+        user = RoomBan.query.filter_by(login=login, room=room).first()
+        if not user: user = RoomBan(login=login, room=room, ban_end_date=dt_object)
+        user.ban_end_date = dt_object
+        db.session.add(user)
+        db.session.commit()
+        time_rban = f'на {_time}'
+        if _time == '*': time_rban = f'навсегда'
+        return f'<label style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} Администратором {current_user.name}</label>'
 
-    def command_mute(self, login: str, _time: str, *args, **kwargs):
+    def command_mute(self, login: str, _time: str = None, *args, **kwargs):
         dt_object = self.__convert_time(_time)
 
         user = User.query.filter_by(name=login).first()
         user.mute_time = dt_object
         db.session.add(user)
         db.session.commit()
-        return f'<label style="color: #87CEEB; font-size: 125%;">Пользователь {login} был замучен на {_time}</label>'
+        time_mute = f'на {_time}'
+        if not _time: time_mute = f'навсегда'
+        return f'<label style="color: #87CEEB; font-size: 125%;">Пользователь {login} был замучен {time_mute} Администратором {current_user.name}</label>'
 
     def command_warn(self, login: str, *args, **kwargs):
         user = User.query.filter_by(name=login).first()
         user.warn += 1
-        msg = f'<label style="color: #B8860B; font-size: 125%;">Пользователь {login} получил {user.warn} предупреждение! '
+        msg = f'<label style="color: #B8860B; font-size: 125%;">Администратор {current_user.name} выдал {user.warn} предупреждение пользователю {login} '
         if user.warn > 2:
             self.command_ban(login=login, _time='45m')
             user.warn = 0
@@ -62,7 +77,7 @@ class MessageControl:
         return f'{msg}</label>'
 
     def __convert_time(self, _time):
-        if not _time:
+        if not _time or _time == '*':
             _time = 60 * 60 * 24 * 365 * 700 + time.time()
         elif _time.find('m') != -1 or _time.find('M') != -1:
             _time = int(_time[:-1]) * 60 + time.time()
