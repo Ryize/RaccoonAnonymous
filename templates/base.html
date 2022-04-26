@@ -21,6 +21,7 @@
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
+    {% include 'includes/main_page.html' %}
     {% block body %}{% endblock %}
     {{ toastr.include_toastr_js() }}
   </body>
