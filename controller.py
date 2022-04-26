@@ -5,7 +5,7 @@ from flask_login import login_required, logout_user, current_user
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 from app import app, db, socketio, all_room, captcha
-from models import User, Message
+from models import User, Message, RoomBan
 from buisness_logic import MessageControl
 
 
@@ -84,17 +84,24 @@ def td_format(td_object):
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     room = request.args.get('room') or 'general'
+    time_now = datetime.fromtimestamp(int(time.time()))
+    try:
+        room_ban_time = td_format(
+            RoomBan.query.filter_by(login=current_user.name, room=room).first().ban_end_date - time_now)
+    except: room_ban_time = None
     last_msg = reversed(Message.query.filter_by(room=room).order_by(Message.created_on.desc()).limit(
         100).all())  # Получить 100 сообщений
-    ban_time = td_format(current_user.ban_time - datetime.fromtimestamp(int(time.time())))
-    return render_template('chat.html', room=room, all_msg=last_msg, _datetime=datetime.utcnow(), ban_time=ban_time)
+    ban_time, mute_time = td_format(current_user.ban_time - time_now), td_format(current_user.mute_time - time_now)
+    return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time, time_now=time_now, mute_time=mute_time)
 
 
 @socketio.on('join', namespace='/chat')
 @login_required
 def join(message):
-    if current_user.ban_time > datetime.fromtimestamp(int(time.time())): return
     room = message.get('room')
+    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
+    if current_user.ban_time > datetime.fromtimestamp(int(time.time())) or (
+            room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
     join_room(room)
     text_template = f"""Вы успешно присоеденились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
     emit('status_join', {'msg': text_template, 'room': room}, to=room)
@@ -103,9 +110,15 @@ def join(message):
 @socketio.on('text', namespace='/chat')
 @login_required
 def text(message):
-    if current_user.ban_time > datetime.fromtimestamp(int(time.time())): return
     room = message.get('room')
     msg = message['msg']
+    new_message = Message(login=current_user.name, text=msg, room=room)
+    db.session.add(new_message)
+    db.session.commit()
+
+    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
+    if current_user.ban_time > datetime.fromtimestamp(int(time.time())) or (
+            room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
     if User.query.filter_by(name=current_user.name).first().admin_status:
         if len(msg.split()) == 4:
             msg = msg.split()
@@ -114,7 +127,7 @@ def text(message):
         try:
             data = MessageControl(msg.replace('\n', '')).auto_command()
             emit('message', {'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
-            if msg.split()[0][1:].lower() == 'ban':
+            if msg.split()[0][1:].lower() in ('ban', 'rban', 'mute', ):
                 emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room'), 'ban': msg.split()[1]},
                      to=room)
             else:
@@ -123,9 +136,6 @@ def text(message):
         except:
             pass
     if len(message['msg'].replace(' ', '').replace('\n', '')) > 0 and len(msg) < 1000:
-        new_message = Message(login=current_user.name, text=msg, room=room)
-        db.session.add(new_message)
-        db.session.commit()
         emit('message', {'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
     else:
         emit('status_error', {'msg': 'Неверные данные!', 'user': current_user.name, 'room': message.get('room')},
