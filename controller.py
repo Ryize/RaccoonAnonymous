@@ -116,9 +116,10 @@ def text(message):
     db.session.add(new_message)
     db.session.commit()
 
+    _time =  datetime.fromtimestamp(int(time.time()))
+
     room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
-    if current_user.ban_time > datetime.fromtimestamp(int(time.time())) or (
-            room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
+    if current_user.ban_time > _time or (room_ban and room_ban.ban_end_date > _time) or current_user.mute_time > _time: return
     if User.query.filter_by(name=current_user.name).first().admin_status:
         if len(msg.split()) == 4:
             msg = msg.split()
