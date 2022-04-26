@@ -1,32 +1,28 @@
 {% extends 'base.html' %}
 {% block title %} Чат анонимных енотов {% endblock %}
 {% block body %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"
-          integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  {% include 'script_chat.html' %}
-  <h1>Анонимный инот</h1>
-  <label>Комната : {{ room.replace('_', ' №') }}</label>
+  {% include 'includes/header.html' %}
+  {% include 'includes/script_chat.html' %}
+  <div class="container">
+    <div class="col-12 text-center mt-2">
+      <h1>Анонимный енот</h1>
+      <label>Комната : {{ room.replace('_', ' №') }}</label>
+    </div>
+  </div>
   <label id="nasukaola"></label>
   {% if ban_time %}
     <center>Вы заблокированны, оставшееся время блокировки: {{ ban_time }}!</center>
   {% elif room_ban_time %}
     <center>Вы заблокированны в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
   {% else %}
-    <div class="form-switch kaesevua">
-      <label style="float: right; margin: 10px;">
-        <small>
-          <input class="form-check-input" type="checkbox" id="check_night">
-          <label class="form-check-label" for="check_night">Ночной режим</label>
-        </small>
-      </label><br><br>
-      <label style="float: right; margin: 10px;">
-        <small>
-          <input class="form-check-input" type="checkbox" id="check_stick">
-          <label class="form-check-label" for="check_stick">Следить за сообщениями</label>
-        </small>
-      </label>
-    </div>
+
+
+
+
+
+
+
+
     <div class="row" id="row">
       <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
       <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
@@ -69,8 +65,8 @@
       {% endif %}
     </div>
   {% endif %}
-  <br/><br/>
-  <hr>
-  <small style="margin: 30px;">© 2022 RaccoonAnonymous</small>
-  {% include 'counter.html' %}
+<br/><br/>
+<hr>
+<small style="margin: 30px;">© 2022 RaccoonAnonymous</small>
+{% include 'includes/counter.html' %}
 {% endblock %}
