@@ -1,19 +1,20 @@
 <script>
     function auto_size_textarea() {
-    var textarea = document.getElementById("text");
-    var heightLimit = 200; /* Maximum height: 200px */
-    window.stick = false
-    textarea.oninput = function () {
-        textarea.style.height = ""; /* Reset the height*/
-        textarea.style.height = Math.min(textarea.scrollHeight, heightLimit) + "px";
-    };
-    document.getElementById("check_night").addEventListener("click", function () {
-        document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
-    });
-    document.getElementById("check_stick").addEventListener("click", function () {
-        window.stick = !window.stick
-    });
-}
+        var textarea = document.getElementById("text");
+        var heightLimit = 200; /* Maximum height: 200px */
+        window.stick = false
+        textarea.oninput = function () {
+            textarea.style.height = ""; /* Reset the height*/
+            textarea.style.height = Math.min(textarea.scrollHeight, heightLimit) + "px";
+        };
+        document.getElementById("check_night").addEventListener("click", function () {
+            document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
+        });
+        document.getElementById("check_stick").addEventListener("click", function () {
+            window.stick = !window.stick
+        });
+    }
+
     var socket;
     $(document).ready(function () {
         auto_size_textarea()
@@ -39,9 +40,6 @@
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
         });
         socket.on('message', function (data) {
-            if (data.ban === '{{ current_user.name }}'){
-                window.location.reload()
-            }
             let msg = document.createElement('div');
             let inner = document.getElementById('chat');
             msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
