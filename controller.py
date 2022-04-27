@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 from app import app, db, socketio, all_room, captcha
 from models import User, Message, RoomBan
-from buisness_logic import MessageControl
+from buisness_logic import MessageControl, check_correct_data, checking_possibility_sending_message
 
 
 @app.route('/')
@@ -115,44 +115,15 @@ def join(message):
 def text(message):
     room = message.get('room')
     msg = message['msg']
+    _time = datetime.fromtimestamp(int(time.time()))
+    if not check_correct_data(message): return
+    if not checking_possibility_sending_message(room, _time): return
     new_message = Message(login=current_user.name, text=msg, room=room)
     db.session.add(new_message)
     db.session.commit()
+    if MessageControl(msg).execute_admin_commands(new_message.id, room): return
 
-    _time = datetime.fromtimestamp(int(time.time()))
-
-    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
-    if current_user.ban_time > _time or (
-            room_ban and room_ban.ban_end_date > _time) or current_user.mute_time > _time: return
-    if User.query.filter_by(name=current_user.name).first().admin_status:
-        if msg.split()[0][1:].lower() == 'broadcast':
-            msg = msg.split()
-            del msg[0]
-            emit('message',
-                 {'msg': '<strong>' + ' '.join(msg) + '</strong>', 'user': 'Предводитель Енотов', 'room': message.get('room')},
-                 broadcast=True)
-            return
-        if len(msg.split()) == 4:
-            msg = msg.split()
-            if msg[3].lower() == 'this': msg[3] = room
-            msg = ' '.join(msg)
-        try:
-            data = MessageControl(msg.replace('\n', '')).auto_command()
-            emit('message', {'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
-            if msg.split()[0][1:].lower() in ('ban', 'rban', 'mute',):
-                emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room'), 'ban': msg.split()[1]},
-                     to=room)
-            else:
-                emit('message', {'msg': data, 'user': 'Система', 'room': message.get('room')}, to=room)
-            return
-        except:
-            pass
-    if len(message['msg'].replace(' ', '').replace('\n', '')) > 0 and len(msg) < 1000:
-        emit('message', {'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
-    else:
-        emit('status_error', {'msg': 'Неверные данные!', 'user': current_user.name, 'room': message.get('room')},
-             to=room)
-
+    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
 
 @app.route('/dialog_list')
 def dialog_list():

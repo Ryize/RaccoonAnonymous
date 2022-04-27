@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %} Чат анонимных енотов {% endblock %}
 {% block body %}
-  {% include 'includes/header.html' %}
   {% include 'includes/script_chat.html' %}
+  {% include 'includes/header.html' %}
   <div class="container">
     <div class="col-12 text-center mt-2">
       <h1>Анонимный енот</h1>
@@ -16,13 +16,6 @@
     <center>Вы заблокированны в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
   {% else %}
 
-
-
-
-
-
-
-
     <div class="row" id="row">
       <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
       <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
@@ -32,7 +25,7 @@
           время!</label></div>
         <br>
         {% for msg in all_msg %}
-          <div style='font-size: 125%; word-wrap: break-word;'>
+          <div style='font-size: 125%; word-wrap: break-word;' title="id сообщениея: {{ msg.id }}">
             {{ msg.login }}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>: &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
           </div>
         {% endfor %}
