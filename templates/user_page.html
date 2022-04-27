@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
-{% block title %} User page {% endblock %}
+
+{% block title %}
+User page
+{% endblock %}
+
 {% block body %}
 <!-- Background image -->
 <div class="bg-image text-center">
@@ -44,31 +48,19 @@
         </div>
         <div class="text-center mt-3">
           <a href="#" class="btn btn-light">Изменить аватар</a>
-{% include 'includes/header.html' %}
-  <section class="about_user">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="card">
-            <div class="card-body text-center">
-              <h5 class="card-title">Аватарочка</h5>
-              <div class="ava">
-                <img src="static/img/alkash.jpeg" class="img-responsive"/>
-              </div>
-              <div class="text-center mt-3">
-                <a href="#" class="btn btn-primary">Изменить аватар</a>
-              </div>
-            </div>
-          </div>
+            <input type="file" value="Изменить аватар" id="file-uploader">
         </div>
-        <div class="col-sm-6">
-          <div class="card">
-            <div class="card-body text-center">
-              <h5 class="card-title">Пару слов о себе:</h5>
-              <p class="card-text "><em>Я копаюсь на помойках, как червяк
-                С детства жизнь моя наперекосяк
-                Канализационный люк - моя дверь
-                Но я счастлив по-своему, поверь
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body text-center">
+        <h5 class="card-title">Пару слов о себе:</h5>
+        <p class="card-text "><em>Я копаюсь на помойках, как червяк
+С детства жизнь моя наперекосяк
+Канализационный люк - моя дверь
+Но я счастлив по-своему, поверь
 
 Двадцать лет назад сгорел родной мой дом:
 Документы, деньги - все сгорело в нем
@@ -83,16 +75,7 @@
 </section>
 
 
+
+
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-                Двадцать лет назад сгорел родной мой дом:
-                Документы, деньги - все сгорело в нем
-                И теперь я побираюсь двадцать лет
-                Кому нужен старый никудышный дед?</em></p>
-              <a href="#" class="btn btn-primary">Добавить изменения</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 {% endblock %}
