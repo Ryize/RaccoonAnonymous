@@ -1,5 +1,5 @@
 <section class="top-roc">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('user_page') }}">{{ current_user.name }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
@@ -9,13 +9,13 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('contacts') }}">Список контактов</a>
+            <a class="nav-link active" aria-current="page" href="{{ url_for('contacts') }}"><label>Список контактов</label></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dialog_list') }}">Список диалогов</a>
+            <a class="nav-link" href="{{ url_for('dialog_list') }}"><label>Список диалогов</label></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('chat') }}">Общий чат</a>
+            <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label >Общий чат</label></a>
           </li>
           <li class="nav-item">
             <div class="form-switch kaesevua">
