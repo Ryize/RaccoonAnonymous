@@ -5,6 +5,7 @@ from app import db
 from models import User, RoomBan
 
 from flask_login import current_user
+from flask_admin import Admin
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 
