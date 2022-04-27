@@ -15,7 +15,7 @@
 .kaesevua {
     width: 100%;
     height: 40px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     position: relative;
 }
 
@@ -26,13 +26,6 @@
 
 #nasukaola {
     background-color: #ffffff;
-}
-
-.sicinga_pesamila #nasukaola:after {
-    background-color: transparent;
-    box-shadow: 10px 10px #15181f;
-    top: -4px;
-    left: 30px;
 }
 
 .counter {

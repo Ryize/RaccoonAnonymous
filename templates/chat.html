@@ -16,29 +16,37 @@
     <center>Вы заблокированны в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
   {% else %}
 
-    <div class="row" id="row">
-      <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
-      <div class="col-xs-1 col-sm-12 col-md-10 col-lg-10" id="chat"
-           style="max-height: 77vh; height: 89vh; overflow: auto; border: 1px solid #ccc; padding: 10px">
-        <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label
-            style="color: red">{{ room.replace('_', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь
-          время!</label></div>
-        <br>
+<div class="container">
+  <div class="row" id="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
+         style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
+          <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label
+              style="color: red">{{ room.replace('', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь
+            время!</label>
+          </div>
         {% for msg in all_msg %}
           <div style='font-size: 125%; word-wrap: break-word;' title="id сообщениея: {{ msg.id }}">
-            {{ msg.login }}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>: &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
+            {{ msg.login }}<label style="font-size: 70%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
+            &nbsp;&nbsp;&nbsp;{{ msg.text }}<br><br>
           </div>
         {% endfor %}
-      </div>
     </div>
-    <div class="row" style="margin-top: 25px;">
-      <div class="col-xs-1 col-sm-12 col-md-2 col-lg-2"></div>
-      {% if current_user.is_authenticated and current_user.mute_time <= time_now %}
-        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-                  <textarea type="text" id="text" placeholder="Введите сообщение..."
-                            style="padding: 10px; border-radius: 5px; width: 93%; font-size: 115%;" autofocus
-                            maxlength="1000"></textarea>
-          <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+  </div>
+
+  <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            {% if current_user.is_authenticated and current_user.mute_time <= time_now %}
+                <div class="p-3">
+                  <div class="mb-3 rounded-3 w-100">
+                    <label for="exampleFormControlTextarea1" class="form-label"></label>
+                    <textarea class="form-control" type="text" id="text" placeholder="Введите сообщение..." rows="3"
+                              autofocus></textarea>
+                  </div>
+                </div>
+          </div>
+  </div>
+</div>
+            <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                fill="currentColor"
                class="bi bi-arrow-right-circle" viewBox="0 0 16 16" id="send">
             <path fill-rule="evenodd"
@@ -58,8 +66,6 @@
       {% endif %}
     </div>
   {% endif %}
-<br/><br/>
-<hr>
-<small style="margin: 30px;">© 2022 RaccoonAnonymous</small>
+
 {% include 'includes/counter.html' %}
 {% endblock %}

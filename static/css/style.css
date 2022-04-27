@@ -14,6 +14,8 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
    height: 30vh;
 }
 
+
+/*Для аватарки*/
 .img-responsive {
    overflow:hidden;
    width: 80%;
