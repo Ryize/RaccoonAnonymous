@@ -40,5 +40,6 @@ all_room = {
 
 if __name__ == '__main__':
     from models import *
+    from admin import admin
     from controller import app
     socketio.run(app, debug=True, port=5011)
