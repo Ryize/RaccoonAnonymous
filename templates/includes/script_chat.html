@@ -42,8 +42,15 @@
         socket.on('message', function (data) {
             let msg = document.createElement('div');
             let inner = document.getElementById('chat');
-            msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
+            if(data.system === true){
+                msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
+            } else{
+                msg.innerText = data.user
+                msg.innerHTML += ': &nbsp;&nbsp;&nbsp;'
+                msg.innerText += data.msg;
+            }
             msg.style = 'font-size: 125%; word-wrap: break-word;'
+            msg.title = 'id сообщениея: '+data.id
             inner.appendChild(msg);
             inner.appendChild(document.createElement('br'))
 
