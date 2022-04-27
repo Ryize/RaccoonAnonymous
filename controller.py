@@ -9,6 +9,12 @@ from models import User, Message, RoomBan
 from buisness_logic import MessageControl, check_correct_data, checking_possibility_sending_message
 
 
+class MessageController:
+    msg_dict = {}
+
+msg_controller = MessageController()
+
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -114,8 +120,12 @@ def join(message):
 @login_required
 def text(message):
     room = message.get('room')
-    msg = message['msg']
+    msg = message['msg'].replace('\n', ' ')
     _time = datetime.fromtimestamp(int(time.time()))
+    if msg_controller.msg_dict.get(current_user.id):
+        if int(msg_controller.msg_dict.get(current_user.id)) + 1 > int(time.time()):
+            return
+    msg_controller.msg_dict[current_user.id] = int(time.time())
     if not check_correct_data(message): return
     if not checking_possibility_sending_message(room, _time): return
     new_message = Message(login=current_user.name, text=msg, room=room)
