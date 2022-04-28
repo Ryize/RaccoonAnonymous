@@ -1,75 +1,41 @@
 {% extends 'base.html' %}
-
-{% block title %}
-User page
-{% endblock %}
-
+{% block title %} User page {% endblock %}
 {% block body %}
-
-<section class="top-roc">
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">{{ current_user.name }}</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="">Список контактов</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Список диалогов</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Общий чат</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-</section>
-
-<section class="about_user">
-<div class="container">
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body text-center">
-        <h5 class="card-title">Аватарочка</h5>
-        <div class="ava">
-          <img src="static/img/racoon_standart.jpg" class="img-responsive" alt=”Аватар”/>
+  {% include 'includes/header.html' %}
+  <section class="about_user">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Аватарочка</h5>
+              <div class="ava">
+                <img src="static/img/racoon_standart.jpg" class="img-responsive" alt=”Аватар”/>
+              </div>
+              <div class="text-center mt-3">
+                <a href="#" class="btn btn-light">Изменить аватар</a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="text-center mt-3">
-          <a href="#" class="btn btn-light">Изменить аватар</a>
-
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Пару слов о себе:</h5>
+              <p class="card-text "><em>Я копаюсь на помойках, как червяк
+                С детства жизнь моя наперекосяк
+                Канализационный люк - моя дверь
+                Но я счастлив по-своему, поверь
+                Двадцать лет назад сгорел родной мой дом:
+                Документы, деньги - все сгорело в нем
+                И теперь я побираюсь двадцать лет
+                Кому нужен старый никудышный дед?</em></p>
+              <a href="#" class="btn btn-light">Добавить изменения</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body text-center">
-        <h5 class="card-title">Пару слов о себе:</h5>
-        <p class="card-text "><em>Я копаюсь на помойках, как червяк
-С детства жизнь моя наперекосяк
-Канализационный люк - моя дверь
-Но я счастлив по-своему, поверь
-
-Двадцать лет назад сгорел родной мой дом:
-Документы, деньги - все сгорело в нем
-И теперь я побираюсь двадцать лет
-          Кому нужен старый никудышный дед?</em></p>
-        <a href="#" class="btn btn-light">Добавить изменения</a>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-</section>
-
-
-
-
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  </section>
+  {% include 'includes/night_style_follow_msg.html' %}
 {% endblock %}
