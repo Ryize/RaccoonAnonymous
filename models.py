@@ -17,8 +17,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
-    ban_time = db.Column(db.DateTime, default=datetime.utcnow)
-    mute_time = db.Column(db.DateTime, default=datetime.utcnow)
     warn = db.Column(db.Integer, default=0)
     admin_status = db.Column(db.Boolean, default=False)
     email = db.Column(db.Text, unique=True, nullable=True)
@@ -83,14 +81,42 @@ class Message(db.Model):
     login = db.Column(db.String(32), nullable=False)
     text = db.Column(db.String(2500), nullable=False)
     room = db.Column(db.String(32), nullable=False)
+    complaint = db.relationship('Complaint', backref='message')
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'{self.login}: {self.text}'
+
+
+class BanUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(32), nullable=False)
+    ban_time = db.Column(db.DateTime, default=datetime.utcnow)
+    reason = db.Column(db.String(64), default='Не указанна!')
+
+
+class MuteUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(32), nullable=False)
+    mute_time = db.Column(db.DateTime, default=datetime.utcnow)
+    reason = db.Column(db.String(64), default='Не указанна!')
 
 
 class RoomBan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
     room = db.Column(db.String(32), nullable=False)
+    reason = db.Column(db.String(64), default='Не указанна!')
     ban_end_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Complaint(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(32), nullable=False)
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+    text = db.Column(db.String(256), default='Не указанна!')
+    agreed_status = db.Column(db.Boolean, default=False)
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 db.create_all()  # Создаёт таблицы, если ещё не созданы

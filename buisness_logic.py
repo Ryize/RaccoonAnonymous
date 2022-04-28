@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 from typing import Optional
 from app import db
-from models import User, RoomBan
+from models import *
 
 from flask_login import current_user
 from flask_admin import Admin
@@ -25,46 +25,51 @@ class MessageControl:
             raise ValueError('Недостаточно аргументов у команды')
         command = msg_split[0][1:]
         login = msg_split[1]
-        _time, room = None, None
+        _time, room, reason = '*', None, 'Не указанна!'
         if len(msg_split) > 2:
             _time = msg_split[2]
-            if len(msg_split) == 4:
+            if len(msg_split) > 3 and msg_split[0][1:] == 'rban':
                 room = msg_split[3]
-        return self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room)
+                reason = ' '.join(msg_split[4:])
+            elif len(msg_split) > 3 and msg_split[0][1:] not in ['broadcast', 'bc']:
+                reason = ' '.join(msg_split[3:])
+        return self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
 
-    def command_ban(self, login: str, _time: Optional[str] = None, *args, **kwargs):
+    def command_ban(self, login: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
-        user = User.query.filter_by(name=login).first()
-        if not user:
-            raise RuntimeError('Пользователь не найден!')
-        user.ban_time = dt_object
-        db.session.add(user)
+        user_ban = BanUser.query.filter_by(login=current_user.name).first()
+        if not user_ban:
+            user_ban = BanUser(login=login, ban_time=dt_object, reason=reason)
+        user_ban.ban_time, user_ban.reason = dt_object, reason
+        db.session.add(user_ban)
         db.session.commit()
         time_ban = f'на {_time}'
-        if not _time: time_ban = f'навсегда'
-        return f'<label style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}</label>'
+        if _time == '*': time_ban = f'навсегда'
+        return f'<p style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
-    def command_rban(self, login: str, room: str, _time: Optional[str] = None, *args, **kwargs):
+    def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
         user = RoomBan.query.filter_by(login=login, room=room).first()
-        if not user: user = RoomBan(login=login, room=room, ban_end_date=dt_object)
-        user.ban_end_date = dt_object
+        if not user: user = RoomBan(login=login, room=room, reason=reason, ban_end_date=dt_object)
+        user.ban_end_date, user.reason = dt_object, reason
         db.session.add(user)
         db.session.commit()
         time_rban = f'на {_time}'
         if _time == '*': time_rban = f'навсегда'
-        return f'<label style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} Администратором {current_user.name}</label>'
+        return f'<p style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
-    def command_mute(self, login: str, _time: str = None, *args, **kwargs):
+    def command_mute(self, login: str, _time: str = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
 
-        user = User.query.filter_by(name=login).first()
-        user.mute_time = dt_object
-        db.session.add(user)
+        user_mute = MuteUser.query.filter_by(login=current_user.name).first()
+        if not user_mute:
+            user_mute = MuteUser(login=login, mute_time=dt_object, reason=reason)
+        user_mute.mute_time, user_mute.reason = dt_object, reason
+        db.session.add(user_mute)
         db.session.commit()
         time_mute = f'на {_time}'
         if not _time: time_mute = f'навсегда'
-        return f'<label style="color: #87CEEB; font-size: 125%;">Пользователь {login} был замучен {time_mute} Администратором {current_user.name}</label>'
+        return f'<p style="color: #87CEEB; font-size: 115%;">Пользователь {login} был замучен {time_mute} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
     def command_warn(self, login: str, *args, **kwargs):
         user = User.query.filter_by(name=login).first()
@@ -82,7 +87,7 @@ class MessageControl:
         if User.query.filter_by(name=current_user.name).first().admin_status:
             if self._broadcast_command(message_id, room): return True
             try:
-                msg = self._preparation_for_rban_command()
+                msg = self._preparation_for_rban_command(room)
                 cmd_answer = self._get_cmd_answer(message_id, msg, room)
                 emit('message', cmd_answer, to=room)
                 return True
@@ -95,7 +100,7 @@ class MessageControl:
             del msg[0]
             emit('message',
                  {'id': message_id, 'msg': '<strong>' + ' '.join(msg) + '</strong>',
-                  'user': 'Предводитель Енотов', 'room': room},
+                  'user': 'Предводитель Енотов', 'room': room, 'system': True},
                  broadcast=True)
             return True
         return False
@@ -108,14 +113,14 @@ class MessageControl:
                          'room': room,
                          'system': True}
         if msg.split()[0][1:].lower() in ('ban', 'rban', 'mute',):
-            dict_template['msg'], dict_template['user'], dict_template['ban'] = data, 'Система', msg.split()[1]
+            dict_template['msg'], dict_template['user'], dict_template['ban'] = data, '', msg.split()[1]
         else:
-            dict_template['msg'], dict_template['user'] = data, 'Система'
+            dict_template['msg'], dict_template['user'] = data, ''
         return dict_template
 
-    def _preparation_for_rban_command(self) -> str:
+    def _preparation_for_rban_command(self, room) -> str:
         msg = self.msg
-        if len(msg.split()) == 4:
+        if len(msg.split()) > 3 and msg.split()[0][1:].lower() == 'rban':
             msg = msg.split()
             if msg[3].lower() == 'this': msg[3] = room
             msg = ' '.join(msg)
@@ -149,7 +154,13 @@ def check_correct_data(message: dict) -> Optional[bool]:
 
 
 def checking_possibility_sending_message(room: str, _time: datetime) -> bool:
-    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
-    if current_user.ban_time > _time or (room_ban and room_ban.ban_end_date > _time) or current_user.mute_time > _time:
-        return False
+    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first() or None
+    user_ban = BanUser.query.filter_by(login=current_user.name).first() or None
+    user_mute = MuteUser.query.filter_by(login=current_user.name).first() or None
+    if user_ban:
+        if user_ban.ban_time > _time: return False
+    if room_ban:
+        if room_ban.ban_end_date > _time: return False
+    if user_mute:
+        if user_mute.mute_time > _time: return False
     return True

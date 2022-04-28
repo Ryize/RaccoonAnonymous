@@ -5,7 +5,7 @@ from flask_login import login_required, logout_user, current_user
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 from app import app, db, socketio, all_room, captcha
-from models import User, Message, RoomBan
+from models import User, Message, RoomBan, BanUser, MuteUser, Complaint
 from buisness_logic import MessageControl, check_correct_data, checking_possibility_sending_message
 
 
@@ -87,21 +87,46 @@ def td_format(td_object):
     return ", ".join(strings)
 
 
+def complaint_on_message(msg: str) -> bool:
+    msg_split = msg.split()
+    if msg_split[0][1:].lower() != 'vote': return False
+    login = current_user.name
+    message_id = msg_split[1]
+    text = ' '.join(msg_split[2:])
+    complaint = Complaint(login=login, message_id=message_id, text=text)
+    db.session.add(complaint)
+    db.session.commit()
+    return True
+
+
 @app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
     room = request.args.get('room') or 'general'
     time_now = datetime.fromtimestamp(int(time.time()))
+    reason = 'Не указанна!'
     try:
-        room_ban_time = td_format(
-            RoomBan.query.filter_by(login=current_user.name, room=room).first().ban_end_date - time_now)
+        room_ban_user = RoomBan.query.filter_by(login=current_user.name, room=room).first()
+        room_ban_time = td_format(room_ban_user.ban_end_date - time_now)
+        reason = room_ban_user.reason
     except:
         room_ban_time = None
-    last_msg = reversed(Message.query.filter_by(room=room).order_by(Message.created_on.desc()).limit(
-        100).all())  # Получить 100 сообщений
-    ban_time, mute_time = td_format(current_user.ban_time - time_now), td_format(current_user.mute_time - time_now)
+    last_msg = reversed(Message.query.filter_by(room=room).order_by(Message.created_on.desc()).limit(100).all())
+    user_ban = BanUser.query.filter_by(login=current_user.name).first()
+    user_mute = MuteUser.query.filter_by(login=current_user.name).first()
+    ban_time, mute_time = None, None
+    if user_ban:
+        ban_time = td_format(user_ban.ban_time - time_now)
+        if not ban_time: ban_time = None
+        else: reason = user_ban.reason
+    if user_mute:
+        mute_time = td_format(user_mute.mute_time - time_now)
+        if mute_time:
+            if user_mute.mute_time < time_now: mute_time = None
+            else: reason = user_mute.reason
+        else: mute_time = None
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
-                           time_now=time_now, mute_time=mute_time)
+                           time_now=time_now, mute_time=mute_time, reason=reason)
 
 
 @socketio.on('join', namespace='/chat')
@@ -109,7 +134,10 @@ def chat():
 def join(message):
     room = message.get('room')
     room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
-    if current_user.ban_time > datetime.fromtimestamp(int(time.time())) or (
+    user_ban = BanUser.query.filter_by(login=current_user.name).first()
+    ban_time = datetime.fromtimestamp(int(time.time())-1)
+    if user_ban: ban_time = user_ban.ban_time
+    if ban_time > datetime.fromtimestamp(int(time.time())) or (
             room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
     join_room(room)
     text_template = f"""Вы успешно присоеденились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
@@ -128,12 +156,13 @@ def text(message):
     msg_controller.msg_dict[current_user.id] = int(time.time())
     if not check_correct_data(message): return
     if not checking_possibility_sending_message(room, _time): return
+    if complaint_on_message(msg): emit('message', {'msg': 'Ваша жалоба зарегестрированна!', 'user': current_user.name, 'room': message.get('room'), 'special': True}, to=room); return
     new_message = Message(login=current_user.name, text=msg, room=room)
     db.session.add(new_message)
     db.session.commit()
     if MessageControl(msg).execute_admin_commands(new_message.id, room): return
 
-    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name, 'room': message.get('room')}, to=room)
+    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name+': ', 'room': message.get('room')}, to=room)
 
 @app.route('/dialog_list')
 def dialog_list():
