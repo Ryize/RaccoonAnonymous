@@ -1,5 +1,5 @@
 <section class="top-roc">
-  <nav class="navbar navbar-expand-lg navbar-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('user_page') }}">{{ current_user.name }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
@@ -17,33 +17,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label >Общий чат</label></a>
           </li>
-          <li class="nav-item">
-            <div class="form-switch kaesevua">
-              <input class="form-check-input text-center" type="checkbox" id="check_night">
-              <label class="form-check-label" for="check_night">Ночной режим</label>
-            </div>
-          </li>
-           <li class="nav-item">
-          <div class="form-switch kaesevua">
-            <input class="form-check-input text-center" type="checkbox" id="check_stick">
-            <label class="form-check-label" for="check_stick">Следить за сообщениями</label>
-          </div>
-          </li>
         </ul>
       </div>
     </div>
   </nav>
 </section>
 
-{#<div class="container">#}
-{#  <div class="form-switch kaesevua">#}
-{#    <div class="row mb-3">#}
-{#      <div class="col text-center">#}
-{#        <input class="form-check-input text-center" type="checkbox" id="check_night">#}
-{#        <label class="form-check-label" for="check_night">Ночной режим</label>#}
-{#      </div>#}
-{#      <div class="col text-center">#}
-{#        <input class="form-check-input text-center" type="checkbox" id="check_stick">#}
-{#        <label class="form-check-label" for="check_stick">Следить за сообщениями</label>#}
-{#      </div>#}
-{#    </div>#}
