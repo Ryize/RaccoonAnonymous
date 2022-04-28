@@ -14,9 +14,12 @@ class MessageControl:
         self.msg = msg
         self._commands = {
             'ban': self.command_ban,
+            'unban': self.command_unban,
             'rban': self.command_rban,
             'mute': self.command_mute,
+            'unmute': self.command_unmute,
             'warn': self.command_warn,
+            'unwarn': self.command_unwarn,
         }
 
     def auto_command(self):
@@ -37,7 +40,7 @@ class MessageControl:
 
     def command_ban(self, login: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
-        user_ban = BanUser.query.filter_by(login=current_user.name).first()
+        user_ban = BanUser.query.filter_by(login=login).first()
         if not user_ban:
             user_ban = BanUser(login=login, ban_time=dt_object, reason=reason)
         user_ban.ban_time, user_ban.reason = dt_object, reason
@@ -47,7 +50,8 @@ class MessageControl:
         if _time == '*': time_ban = f'навсегда'
         return f'<p style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
-    def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args, **kwargs):
+    def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args,
+                     **kwargs):
         dt_object = self.__convert_time(_time)
         user = RoomBan.query.filter_by(login=login, room=room).first()
         if not user: user = RoomBan(login=login, room=room, reason=reason, ban_end_date=dt_object)
@@ -61,7 +65,7 @@ class MessageControl:
     def command_mute(self, login: str, _time: str = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
 
-        user_mute = MuteUser.query.filter_by(login=current_user.name).first()
+        user_mute = MuteUser.query.filter_by(login=login).first()
         if not user_mute:
             user_mute = MuteUser(login=login, mute_time=dt_object, reason=reason)
         user_mute.mute_time, user_mute.reason = dt_object, reason
@@ -81,6 +85,40 @@ class MessageControl:
             msg += 'И был заблокирован на 45 минут!'
         db.session.add(user)
         db.session.commit()
+        return f'{msg}</label>'
+
+    def command_unban(self, login: str, *args, **kwargs):
+        user = BanUser.query.filter_by(login=login).first()
+        if user:
+            user.ban_time = self.__convert_time('1')
+        else:
+            return
+        db.session.add(user)
+        db.session.commit()
+        msg = f'<label style="color: #B8860B; font-size: 125%;">Администратор {current_user.name} разбанил пользователя {login} '
+        return f'{msg}</label>'
+
+    def command_unmute(self, login: str, *args, **kwargs):
+        user = MuteUser.query.filter_by(login=login).first()
+        if user:
+            user.mute_time = self.__convert_time('1')
+        else:
+            return
+        db.session.add(user)
+        db.session.commit()
+        msg = f'<label style="color: #B8860B; font-size: 125%;">Администратор {current_user.name} размутил пользователя {login} '
+        return f'{msg}</label>'
+
+    def command_unwarn(self, login: str, *args, **kwargs):
+        user = User.query.filter_by(name=login).first()
+        if user:
+            if user.warn > 0:
+                user.warn -= 1
+        else:
+            return
+        db.session.add(user)
+        db.session.commit()
+        msg = f'<label style="color: #B8860B; font-size: 125%;">Администратор {current_user.name} снял одно предупреждение с пользователя {login}. Осталось {user.warn} предупреждений '
         return f'{msg}</label>'
 
     def execute_admin_commands(self, message_id: int, room: str):
@@ -180,9 +218,12 @@ def get_mute_data(user_mute: MuteUser, time_now: datetime, reason: str) -> Tuple
     if user_mute:
         mute_time = td_format(user_mute.mute_time - time_now)
         if mute_time:
-            if user_mute.mute_time < time_now: mute_time = None
-            else: reason = user_mute.reason
-        else: mute_time = None
+            if user_mute.mute_time < time_now:
+                mute_time = None
+            else:
+                reason = user_mute.reason
+        else:
+            mute_time = None
     return mute_time, reason
 
 
