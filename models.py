@@ -94,12 +94,18 @@ class BanUser(db.Model):
     ban_time = db.Column(db.DateTime, default=datetime.utcnow)
     reason = db.Column(db.String(64), default='Не указанна!')
 
+    def __repr__(self):
+        return f'{self.login}({self.ban_time}): {self.reason}'
+
 
 class MuteUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
     mute_time = db.Column(db.DateTime, default=datetime.utcnow)
     reason = db.Column(db.String(64), default='Не указанна!')
+
+    def __repr__(self):
+        return f'{self.login}({self.mute_time}): {self.reason}'
 
 
 class RoomBan(db.Model):
@@ -108,6 +114,9 @@ class RoomBan(db.Model):
     room = db.Column(db.String(32), nullable=False)
     reason = db.Column(db.String(64), default='Не указанна!')
     ban_end_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'{self.login}({self.room}): {self.reason}'
 
 
 class Complaint(db.Model):

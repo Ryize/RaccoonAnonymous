@@ -1,3 +1,4 @@
+alembic==1.7.7
 bidict==0.21.4
 captcha==0.4
 certifi==2021.10.8
@@ -7,6 +8,7 @@ dataclasses==0.6
 Flask==2.0.3
 Flask-Admin==1.6.0
 Flask-Login==0.5.0
+Flask-Migrate==3.1.0
 Flask-Moment==1.0.2
 flask-session-captcha==1.2.2
 Flask-Sessionstore==0.4.5
@@ -16,8 +18,10 @@ Flask-Toastr==0.5.7
 greenlet==1.1.2
 idna==3.3
 importlib-metadata==4.8.3
+importlib-resources==5.4.0
 itsdangerous==2.0.1
 Jinja2==3.0.3
+Mako==1.1.6
 MarkupSafe==2.0.1
 Pillow==8.4.0
 python-engineio==4.3.1
