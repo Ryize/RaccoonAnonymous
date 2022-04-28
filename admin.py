@@ -2,7 +2,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, AdminIndexView, expose
 from flask_login import current_user
 from app import app
-from models import db, User, RoomBan, Message
+from models import db, User, RoomBan, Message, Complaint
 
 
 class RacoonAnonymousModelView(ModelView):
@@ -27,6 +27,10 @@ class MessageView(RacoonAnonymousModelView):
     column_filters = ("id", 'login', 'text', 'room', 'created_on',)
 
 
+class ComplaintView(RacoonAnonymousModelView):
+    column_filters = ("id", 'login', 'message_id', 'text', 'created_on',)
+
+
 class IndexView(AdminIndexView):
     @expose('/')
     def admin_index(self):
@@ -42,3 +46,4 @@ admin = Admin(app, name='Анонимные еноты', template_mode='bootstra
 admin.add_view(UserView(User, db.session, name='Пользователи'))
 admin.add_view(RoomBanView(RoomBan, db.session, name='Забаненные в комнатах'))
 admin.add_view(MessageView(Message, db.session, name='Сообщения'))
+admin.add_view(ComplaintView(Complaint, db.session, name='Жалобы'))

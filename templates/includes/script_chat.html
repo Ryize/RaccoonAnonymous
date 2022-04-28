@@ -43,16 +43,19 @@
             let msg = document.createElement('div');
             let inner = document.getElementById('chat');
             if(data.system === true){
-                msg.innerHTML = data.user + ': &nbsp;&nbsp;&nbsp;' + data.msg;
+                msg.innerHTML = data.user + '&nbsp;&nbsp;&nbsp;' + data.msg;
+            }else if(data.special === true){
+                if (data.user === '{{ current_user.name }}'){
+                    msg.innerHTML = data.user + '&nbsp;&nbsp;&nbsp;' + data.msg
+                }
             } else{
                 msg.innerText = data.user
-                msg.innerHTML += ': &nbsp;&nbsp;&nbsp;'
+                msg.innerHTML += ' &nbsp;&nbsp;&nbsp;'
                 msg.innerText += data.msg;
             }
-            msg.style = 'font-size: 125%; word-wrap: break-word;'
-            msg.title = 'id сообщениея: '+data.id
+            msg.style = 'font-size: 125%; word-wrap: break-word; margin-top: 1%;'
+            msg.title = 'id сообщения: '+data.id
             inner.appendChild(msg);
-            inner.appendChild(document.createElement('br'))
 
             if (window.stick) {
                 var myDiv = document.getElementById("chat");
