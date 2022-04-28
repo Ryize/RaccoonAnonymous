@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Tuple, Optional
 from app import db
 from models import *
 
@@ -163,4 +163,56 @@ def checking_possibility_sending_message(room: str, _time: datetime) -> bool:
         if room_ban.ban_end_date > _time: return False
     if user_mute:
         if user_mute.mute_time > _time: return False
+    return True
+
+
+def get_ban_data(user_ban: BanUser, time_now: datetime, reason: str) -> Tuple[Optional[str], str]:
+    ban_time = None
+    if user_ban:
+        ban_time = td_format(user_ban.ban_time - time_now)
+        if ban_time:
+            reason = user_ban.reason
+    return ban_time, reason
+
+
+def get_mute_data(user_mute: MuteUser, time_now: datetime, reason: str) -> Tuple[Optional[str], str]:
+    mute_time = None
+    if user_mute:
+        mute_time = td_format(user_mute.mute_time - time_now)
+        if mute_time:
+            if user_mute.mute_time < time_now: mute_time = None
+            else: reason = user_mute.reason
+        else: mute_time = None
+    return mute_time, reason
+
+
+def td_format(td_object) -> str:
+    seconds = int(td_object.total_seconds())
+    periods = [
+        ('лет', 60 * 60 * 24 * 365),
+        ('месяца(ев)', 60 * 60 * 24 * 30),
+        ('день(дня-дней)', 60 * 60 * 24),
+        ('час(а-ов)', 60 * 60),
+        ('минут(а)', 60),
+        ('секунд', 1)
+    ]
+
+    strings = []
+    for period_name, period_seconds in periods:
+        if seconds > period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            strings.append("%s %s" % (period_value, period_name))
+
+    return ", ".join(strings)
+
+
+def complaint_on_message(msg: str) -> bool:
+    msg_split = msg.split()
+    if msg_split[0][1:].lower() != 'vote': return False
+    login = current_user.name
+    message_id = msg_split[1]
+    text = ' '.join(msg_split[2:])
+    complaint = Complaint(login=login, message_id=message_id, text=text)
+    db.session.add(complaint)
+    db.session.commit()
     return True
