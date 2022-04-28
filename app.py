@@ -8,13 +8,14 @@ from flask_socketio import SocketIO
 from flask_moment import Moment
 from flask_sessionstore import Session
 from flask_session_captcha import FlaskSessionCaptcha
-
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
-toastr = Toastr(app)
+toastr = Toastr(app)  # Для современного отображения flash сообщений
 moment = Moment(app)
+migrate_bd = Migrate(app, db)
 
 app.config['SECRET_KEY']: str = str(uuid.uuid4())
 app.config['SQLALCHEMY_DATABASE_URI']: str = 'sqlite:///bd.db'
@@ -32,14 +33,23 @@ captcha = FlaskSessionCaptcha(app)
 
 # Все комнаты
 all_room = {
-    'Спорт': 3,
-    'IT': 5,
-    'Наука': 3,
-    'Долгая разработка': 10,
+    'IT': 2,
+    'Спорт': 2,
+    'Наука': 2,
+    'Иностранные языки': 2,
+    'Работа с фото/монтаж': 2,
+    'Игры': 3,
+    'Творчество': 2,
+    'Книги': 2,
+    'Кулинария': 2,
+    'Вождение': 2,
+    'Ремонт техники': 1,
+    'Хобби': 2,
 }
 
 if __name__ == '__main__':
     from models import *
     from admin import admin
     from controller import app
+
     socketio.run(app, debug=True, port=5013)
