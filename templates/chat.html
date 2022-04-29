@@ -16,56 +16,64 @@
     <center>Вы заблокированны в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
   {% else %}
 
-<div class="container">
-  <div class="row" id="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
-         style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
-          <div><label>Привет {{ current_user.name }}, добро пожаловать в комнату <label
-              style="color: red">{{ room.replace('', ' №') }}</label>. Надеемся ты не здохнешь, как мы проведёшь
-            время!</label>
-          </div>
-        {% for msg in all_msg %}
-          <div style='font-size: 125%; word-wrap: break-word;' title="id сообщениея: {{ msg.id }}">
-            {{ msg.login }}<label style="font-size: 70%; margin-top: 2%;"> &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
-            &nbsp;&nbsp;&nbsp;{{ msg.text }}
-          </div>
-        {% endfor %}
-    </div>
-  </div>
+    <div class="container">
+      <div class="row" id="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
+             style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
+          {% for msg in all_msg %}
+            <div class="fs-3 text-break" title="id сообщение: {{ msg.id }}">
+              {{ msg.login }}<label style="font-size: 70%; margin-top: 2%;">
+              &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
+              &nbsp;&nbsp;&nbsp;{{ msg.text }}
+            </div>
+          {% endfor %}
+          <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong>! Добро пожаловать в
+            комнату <em>{{ room }}</em>. Надеемся ты весело проведешь
+            время!
+          </p>
+        </div>
+      </div>
 
-  <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-            {% if current_user.is_authenticated and not mute_time %}
-                <div class="p-3">
-                  <div class="mb-3 rounded-3 w-100">
-                    <label for="exampleFormControlTextarea1" class="form-label"></label>
-                    <textarea class="form-control" type="text" id="text" placeholder="Введите сообщение..." maxlength="1000" rows="3"
-                              autofocus></textarea>
-                  </div>
-                </div>
-          </div>
-  </div>
-</div>
-          <svg style="margin-left: 10px; margin-bottom: 2%;" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
-               fill="currentColor"
-               class="bi bi-arrow-right-circle" viewBox="0 0 16 16" id="send">
-            <path fill-rule="evenodd"
-                  d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
-          </svg>
-          <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span
-              id="maximum">/ 1000 </span></small></label>
-        </div>
-      {% elif mute_time %}
-        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-          <center><h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4></center>
-        </div>
-      {% else %}
-        <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-          <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
-        </div>
-      {% endif %}
-    </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+          {% if current_user.is_authenticated and not mute_time %}
+            <div class="p-2">
+              <div class="mb-3 rounded-3 w-100">
+                <label for="exampleFormControlTextarea1" class="form-label"></label>
+                <textarea class="form-control" type="text" id="text" placeholder="Введите сообщение..." maxlength="1000"
+                          rows="3"
+                          autofocus></textarea>
+              </div>
+            </div>
+            <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span
+                id="maximum">/ 1000 </span></small></label>
+            </div>
+
+            <div class="d-grid gap-2 pb-5" id="send">
+              <button class="btn btn-secondary" type="button">Button</button>
+            </div>
+            </div>
+            </div>
+
+
+
+
+
+
+
+            </div>
+          {% elif mute_time %}
+            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+              <center><h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
+              </center>
+            </div>
+          {% else %}
+            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
+              <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
+            </div>
+          {% endif %}
   {% endif %}
-  <br>
-{% include 'includes/counter.html' %}
+
+  {% include 'includes/counter.html' %}
+  {% include 'includes/night_style_follow_msg.html' %}
 {% endblock %}
