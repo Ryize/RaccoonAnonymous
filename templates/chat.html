@@ -21,8 +21,8 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
              style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
           {% for msg in all_msg %}
-            <div class="fs-3 text-break" title="id сообщение: {{ msg.id }}">
-              {{ msg.login }}<label style="font-size: 70%; margin-top: 2%;">
+            <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
+              {{ msg.login }}<label style="font-size: 70%; margin-top: 1%;">
               &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
             </div>
