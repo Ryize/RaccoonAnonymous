@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Union, Optional
 
 from flask import Flask
-from flask_login import UserMixin, login_user
+from flask_login import UserMixin, login_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -19,6 +19,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.Text, nullable=False)
     warn = db.Column(db.Integer, default=0)
     admin_status = db.Column(db.Boolean, default=False)
+    banned = db.relationship('BanUser', backref='user')
+    muted = db.relationship('MuteUser', backref='user')
     email = db.Column(db.Text, unique=True, nullable=True)
 
     @staticmethod
@@ -74,6 +76,11 @@ class User(db.Model, UserMixin):
     def login(self):
         pass
 
+    def __repr__(self):
+        status = 'Пользователь'
+        if self.admin_status: status = 'Администратор'
+        return f'{self.name} ({status})'
+
 
 
 class Message(db.Model):
@@ -91,6 +98,7 @@ class Message(db.Model):
 class BanUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
+    who_banned = db.Column(db.Integer, db.ForeignKey('user.id'))
     ban_time = db.Column(db.DateTime, default=datetime.utcnow)
     reason = db.Column(db.String(64), default='Не указанна!')
 
@@ -101,6 +109,7 @@ class BanUser(db.Model):
 class MuteUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
+    who_muted = db.Column(db.Integer, db.ForeignKey('user.id'))
     mute_time = db.Column(db.DateTime, default=datetime.utcnow)
     reason = db.Column(db.String(64), default='Не указанна!')
 
