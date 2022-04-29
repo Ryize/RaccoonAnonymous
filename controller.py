@@ -70,16 +70,17 @@ def rooms():
 @login_required
 def chat():
     room = request.args.get('room') or 'general'
-    room_text, room_number = room.split('_')
-    for title, number in all_room.items():
-        if room_text == title:
-            if int(room_number) < 1 or int(room_number) > number:
-                flash('Такой комнаты не существует!', 'error')
-                return redirect(url_for('rooms'))
-            break
-    else:
-        flash('Такой комнаты не существует!', 'error')
-        return redirect(url_for('rooms'))
+    if room != 'general':
+        room_text, room_number = room.split('_')
+        for title, number in all_room.items():
+            if room_text == title:
+                if int(room_number) < 1 or int(room_number) > number:
+                    flash('Такой комнаты не существует!', 'error')
+                    return redirect(url_for('rooms'))
+                break
+        else:
+            flash('Такой комнаты не существует!', 'error')
+            return redirect(url_for('rooms'))
     time_now = datetime.fromtimestamp(int(time.time()))
     reason = 'Не указанна!'
     room_ban_time = None
