@@ -127,6 +127,11 @@ def dialog_list():
     return render_template("dialog_list.html")
 
 
+@app.route('/rules')
+def rules():
+    return render_template("rules.html")
+
+
 @app.route("/logout")
 @login_required
 def logout():

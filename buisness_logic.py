@@ -40,9 +40,9 @@ class MessageControl:
 
     def command_ban(self, login: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
-        user_ban = BanUser.query.filter_by(login=login).first()
+        user_ban = BanUser.query.filter_by(login=login, who_banned=current_user.id).first()
         if not user_ban:
-            user_ban = BanUser(login=login, ban_time=dt_object, reason=reason)
+            user_ban = BanUser(login=login, ban_time=dt_object, reason=reason, who_banned=current_user.id)
         user_ban.ban_time, user_ban.reason = dt_object, reason
         db.session.add(user_ban)
         db.session.commit()
@@ -65,9 +65,9 @@ class MessageControl:
     def command_mute(self, login: str, _time: str = None, reason: str = 'Не указанна!', *args, **kwargs):
         dt_object = self.__convert_time(_time)
 
-        user_mute = MuteUser.query.filter_by(login=login).first()
+        user_mute = MuteUser.query.filter_by(login=login, who_muted=current_user.id).first()
         if not user_mute:
-            user_mute = MuteUser(login=login, mute_time=dt_object, reason=reason)
+            user_mute = MuteUser(login=login, mute_time=dt_object, reason=reason, who_muted=current_user.id)
         user_mute.mute_time, user_mute.reason = dt_object, reason
         db.session.add(user_mute)
         db.session.commit()
