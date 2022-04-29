@@ -27,16 +27,17 @@
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
             </div>
           {% endfor %}
-          <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong>! Добро пожаловать в
+          <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong> Добро пожаловать в
             комнату <em>{{ room }}</em>. Надеемся ты весело проведешь
             время!
-          <p>Чтобы получить список правил, введите команду <em>/rules</em> (Или <em>!rules</em>).</p>
-          <p>Если вы видите, что кто-то нарушил правило используйте команду:
-            <em>/vote idСообщения Дополнительный текст жалобы</em> - Администрация увидит жалобу и примет меры. Чтобы узнать id сообщения, наведите на него мышкой;</p>
+          <p>Чтобы получить список правил, введи команду <em>!rules</em>.</p>
+          <p>Если ты видишь, что кто-то нарушил правило используй команду:
+            <em>/vote id-сообщения и дополнительный текст жалобы.</em>
+            Администрация увидит жалобу и примет меры. Чтобы узнать id-сообщения, наведи на него мышкой. Пример: /vote
+            54 меня оскорбили.</p>
           </p>
         </div>
       </div>
-
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
           {% if current_user.is_authenticated and not mute_time %}
@@ -48,25 +49,26 @@
                           autofocus></textarea>
               </div>
             </div>
-            <label id="the-count" style="float: right; margin-right: 7%"><small><span id="current">0</span> <span
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
+          <label id="the-count"><small><span id="current">0</span> <span
                 id="maximum">/ 1000 </span></small></label>
-            </div>
+        </div>
+          </div>
+          <div class="btn-counter d-grid gap-1 pb-5" id="send">
+          <button class="btn btn-secondary" type="button">Отправить</button>
+        </div>
+    </div>
 
-            <div class="d-grid gap-2 pb-5" id="send">
-              <button class="btn btn-secondary" type="button">Button</button>
-            </div>
-            </div>
-            </div>
 
-            </div>
           {% elif mute_time %}
             <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
               <center><h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
               </center>
             </div>
           {% else %}
-            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-              <center><h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4></center>
+            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
+              <h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4>
             </div>
           {% endif %}
   {% endif %}
