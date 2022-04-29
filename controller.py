@@ -63,13 +63,24 @@ def contacts():
 
 
 @app.route('/rooms')
-def roomss():
+def rooms():
     return render_template("all_room.html", all_room=all_room)
 
 @app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
     room = request.args.get('room') or 'general'
+    if room != 'general':
+        room_text, room_number = room.split('_')
+        for title, number in all_room.items():
+            if room_text == title:
+                if int(room_number) < 1 or int(room_number) > number:
+                    flash('Такой комнаты не существует!', 'error')
+                    return redirect(url_for('rooms'))
+                break
+        else:
+            flash('Такой комнаты не существует!', 'error')
+            return redirect(url_for('rooms'))
     time_now = datetime.fromtimestamp(int(time.time()))
     reason = 'Не указанна!'
     room_ban_time = None

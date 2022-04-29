@@ -63,7 +63,8 @@
                 msg.innerHTML += ' &nbsp;&nbsp;&nbsp;'
                 msg.innerText += data.msg;
             }
-            msg.style = 'font-size: 125%; word-wrap: break-word; margin-top: 1%;'
+            msg.classList = 'fs-4 text-break';
+            msg.style = 'font-size: 70%; margin-top: 0.5%'
             msg.title = 'id сообщения: ' + data.id
             inner.appendChild(msg);
 
