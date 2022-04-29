@@ -25,3 +25,7 @@
     bottom: 5px;
     right: 5px;
 }
+
+.btn-counter {
+    padding: 0 60px 0 60px;
+}
