@@ -140,6 +140,20 @@ class Complaint(db.Model):
 db.create_all()  # Создаёт таблицы, если ещё не созданы
 
 
+def save_message(login: str, text: str, room: str) -> Message:
+    """
+    Сохраняет в БД новое сообщение.
+    :param login: str (Логин пользователя, написавшего сообщение)
+    :param text: str (Текст сообщения)
+    :param room: str (Название комнаты)
+    :return: Message (Объект класса Message, он уже закомичен в БД)
+    """
+    new_message = Message(login=login, text=text, room=room)
+    db.session.add(new_message)
+    db.session.commit()
+    return new_message
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
