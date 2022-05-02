@@ -5,7 +5,7 @@ from flask_login import login_required, logout_user, current_user
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
 from app import app, db, socketio, all_room, captcha
-from models import User, Message, RoomBan, BanUser, MuteUser, Complaint
+from models import *
 from buisness_logic import *
 
 
@@ -133,47 +133,6 @@ def text(message):
          to=room)
 
 
-def check_message_can_processed(message: dict, room: str, _time: datetime) -> bool:
-    """
-    Выполняет проверки: Все ли данные введены корректно (Сообщение не может быть из одних пробелов/табов и тд),
-    не заблокирован/замучен пользователь, прошла ли хотя бы секунда с прошлого сообщения (Чтобы не было спама).
-    :param message: dict (Словарь сообщения, его передаёт socketio)
-    :param room: str (Название комнаты)
-    :param _time: datetime (Объект времени с библиотеки datetime)
-    :return: bool (True - можно обработать сообщение, False - сообщения нельзя обрабатывать,
-                    одна или несколько проверок не пройдены)
-    """
-    if not check_time_send_msg() or not check_correct_data(message) or not checking_possibility_sending_message(room,
-                                                                                                                _time):
-        return False
-    return True
-
-
-def check_time_send_msg() -> bool:
-    """
-    Проверяет сколько времени прошло с прошлого сообщения. Должно быть не менее 1 секунды.
-    :return: bool (True - прошло более (или ровно) 1 секунды, False - меньше 1 секунды)
-    """
-    if msg_controller.msg_dict.get(current_user.id):
-        if int(msg_controller.msg_dict.get(current_user.id)) + 1 > int(time.time()):
-            return False
-    return True
-
-
-def save_message(login: str, text: str, room: str) -> Message:
-    """
-    Сохраняет в БД новое сообщение.
-    :param login: str (Логин пользователя, написавшего сообщение)
-    :param text: str (Текст сообщения)
-    :param room: str (Название комнаты)
-    :return: Message (Объект класса Message, он уже закомичен в БД)
-    """
-    new_message = Message(login=login, text=text, room=room)
-    db.session.add(new_message)
-    db.session.commit()
-    return new_message
-
-
 @app.route('/dialog_list')
 def dialog_list():
     return render_template("dialog_list.html")
@@ -201,3 +160,30 @@ def redirect_to_sign(response):
         return redirect(url_for('authorisation'))
 
     return response
+
+
+def check_time_send_msg() -> bool:
+    """
+    Проверяет сколько времени прошло с прошлого сообщения. Должно быть не менее 1 секунды.
+    :return: bool (True - прошло более (или ровно) 1 секунды, False - меньше 1 секунды)
+    """
+    if msg_controller.msg_dict.get(current_user.id):
+        if int(msg_controller.msg_dict.get(current_user.id)) + 1 > int(time.time()):
+            return False
+    return True
+
+
+def check_message_can_processed(message: dict, room: str, _time: datetime) -> bool:
+    """
+    Выполняет проверки: Все ли данные введены корректно (Сообщение не может быть из одних пробелов/табов и тд),
+    не заблокирован/замучен пользователь, прошла ли хотя бы секунда с прошлого сообщения (Чтобы не было спама).
+    :param message: dict (Словарь сообщения, его передаёт socketio)
+    :param room: str (Название комнаты)
+    :param _time: datetime (Объект времени с библиотеки datetime)
+    :return: bool (True - можно обработать сообщение, False - сообщения нельзя обрабатывать,
+                    одна или несколько проверок не пройдены)
+    """
+    if not check_time_send_msg() or not check_correct_data(message) or not checking_possibility_sending_message(room,
+                                                                                                                _time):
+        return False
+    return True
