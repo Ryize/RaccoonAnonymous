@@ -205,6 +205,25 @@ class MessageControl:
             return True
         return False
 
+    def msg_command(self) -> bool:
+        """
+        Логика команды msg - отправляет сообщение только определённому человеку.
+        :return: bool (True - сообщение успешно отправлено, False - введённая команда не msg или m)
+        """
+        if self.msg.split()[0][1:].lower() in ['msg', 'm']:
+            msg = self.msg.split()
+            del msg[0]
+            user_login = msg[0]
+            del msg[0]
+            emit('message',
+                 {'id': 'id неопределенно', 'msg': f'[<label style="color: #FF8C00">{current_user.name}&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;Я</label>]&nbsp;  {" ".join(msg)}',
+                  'user': User.query.filter_by(name=user_login).first().name, 'special': True,},
+                 broadcast=True)
+            emit('message', {'id': 'id неопределенно', 'msg': f'[<label style="color: #FF8C00">Я&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;{user_login}</label>]&nbsp;  {" ".join(msg)}',
+                  'user': current_user.name, 'special': True,})
+            return True
+        return False
+
     def _get_cmd_answer(self, message_id: int, msg: str, room: str) -> dict:
         """
         Реализует стандартный генератор ответа сервера.

@@ -56,7 +56,7 @@
                 msg.innerHTML = data.user + '&nbsp;&nbsp;&nbsp;' + data.msg;
             } else if (data.special === true) {
                 if (data.user === '{{ current_user.name }}') {
-                    msg.innerHTML = data.user + '&nbsp;&nbsp;&nbsp;' + data.msg
+                    msg.innerHTML = data.msg
                 }
             } else {
                 msg.innerText = data.user
