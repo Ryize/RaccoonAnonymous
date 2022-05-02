@@ -72,17 +72,7 @@ def rooms():
 @login_required
 def chat():
     room = request.args.get('room') or 'general'
-    if room != 'general':
-        room_text, room_number = room.split('_')
-        for title, number in all_room.items():
-            if room_text == title:
-                if int(room_number) < 1 or int(room_number) > number:
-                    flash('Такой комнаты не существует!', 'error')
-                    return redirect(url_for('rooms'))
-                break
-        else:
-            flash('Такой комнаты не существует!', 'error')
-            return redirect(url_for('rooms'))
+    if not checking_room_exists(room): return redirect(url_for('rooms'))
     time_now = datetime.fromtimestamp(int(time.time()))
     reason = 'Не указанна!'
     room_ban_time = None
@@ -98,7 +88,7 @@ def chat():
     ban_time, reason = get_ban_data(user_ban, time_now, reason)
     mute_time, reason = get_mute_data(user_mute, time_now, reason)
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
-                           time_now=time_now, mute_time=mute_time, reason=reason)
+                           time_now=time_now, mute_time=mute_time, reason=reason, User=User)
 
 
 @socketio.on('join', namespace='/chat')
@@ -130,7 +120,8 @@ def text(message):
     new_message = save_message(current_user.name, msg, room)
     if MessageControl(msg).execute_admin_commands(new_message.id, room): return
 
-    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name + ': ', 'room': message.get('room')},
+    user_name, system = get_msg_data()
+    emit('message', {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system},
          to=room)
 
 
@@ -187,4 +178,35 @@ def check_message_can_processed(message: dict, room: str, _time: datetime) -> bo
     if not check_time_send_msg() or not check_correct_data(message) or not checking_possibility_sending_message(room,
                                                                                                                 _time):
         return False
+    return True
+
+
+def get_msg_data() -> tuple:
+    """
+    Получить данные (Префикс, статус ответа сервера)
+    :return: tuple (1 - префикс + имя пользователя, статус сервера)
+    """
+    user_name, system = current_user.name, False
+    if current_user.admin_status:
+        user_name = f'<small>[<label style="color: #CD5C5C">Админ</label>]</small> {current_user.name}'
+        system = True
+    return user_name, system
+
+
+def checking_room_exists(room: str):
+    if room != 'general':
+        try:
+            room_text, room_number = room.split('_')
+        except ValueError:
+            flash('Такой комнаты не существует!', 'error')
+            return False
+        for title, number in all_room.items():
+            if room_text == title:
+                if int(room_number) < 1 or int(room_number) > number:
+                    flash('Такой комнаты не существует!', 'error')
+                    return False
+                break
+        else:
+            flash('Такой комнаты не существует!', 'error')
+            return False
     return True
