@@ -12,6 +12,7 @@ from buisness_logic import *
 class MessageController:
     msg_dict = {}
 
+
 msg_controller = MessageController()
 
 
@@ -66,6 +67,7 @@ def contacts():
 def rooms():
     return render_template("all_room.html", all_room=all_room)
 
+
 @app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
@@ -98,13 +100,14 @@ def chat():
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
                            time_now=time_now, mute_time=mute_time, reason=reason)
 
+
 @socketio.on('join', namespace='/chat')
 @login_required
 def join(message):
     room = message.get('room')
     room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
     user_ban = BanUser.query.filter_by(login=current_user.name).first()
-    ban_time = datetime.fromtimestamp(int(time.time())-1)
+    ban_time = datetime.fromtimestamp(int(time.time()) - 1)
     if user_ban: ban_time = user_ban.ban_time
     if ban_time > datetime.fromtimestamp(int(time.time())) or (
             room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
@@ -119,19 +122,57 @@ def text(message):
     room = message.get('room')
     msg = message['msg'].replace('\n', ' ')
     _time = datetime.fromtimestamp(int(time.time()))
-    if msg_controller.msg_dict.get(current_user.id):
-        if int(msg_controller.msg_dict.get(current_user.id)) + 1 > int(time.time()):
-            return
+    if not check_message_can_processed(message, room, _time): return
     msg_controller.msg_dict[current_user.id] = int(time.time())
-    if not check_correct_data(message): return
-    if not checking_possibility_sending_message(room, _time): return
-    if complaint_on_message(msg): emit('message', {'msg': 'Ваша жалоба зарегестрированна!', 'user': current_user.name, 'room': message.get('room'), 'special': True}, to=room); return
-    new_message = Message(login=current_user.name, text=msg, room=room)
-    db.session.add(new_message)
-    db.session.commit()
+    if complaint_on_message(msg): emit('message', {'msg': 'Ваша жалоба зарегестрированна!', 'user': current_user.name,
+                                                   'room': message.get('room'), 'special': True}, to=room); return
+    new_message = save_message(current_user.name, msg, room)
     if MessageControl(msg).execute_admin_commands(new_message.id, room): return
 
-    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name+': ', 'room': message.get('room')}, to=room)
+    emit('message', {'id': new_message.id, 'msg': msg, 'user': current_user.name + ': ', 'room': message.get('room')},
+         to=room)
+
+
+def check_message_can_processed(message: dict, room: str, _time: datetime) -> bool:
+    """
+    Выполняет проверки: Все ли данные введены корректно (Сообщение не может быть из одних пробелов/табов и тд),
+    не заблокирован/замучен пользователь, прошла ли хотя бы секунда с прошлого сообщения (Чтобы не было спама).
+    :param message: dict (Словарь сообщения, его передаёт socketio)
+    :param room: str (Название комнаты)
+    :param _time: datetime (Объект времени с библиотеки datetime)
+    :return: bool (True - можно обработать сообщение, False - сообщения нельзя обрабатывать,
+                    одна или несколько проверок не пройдены)
+    """
+    if not check_time_send_msg() or not check_correct_data(message) or not checking_possibility_sending_message(room,
+                                                                                                                _time):
+        return False
+    return True
+
+
+def check_time_send_msg() -> bool:
+    """
+    Проверяет сколько времени прошло с прошлого сообщения. Должно быть не менее 1 секунды.
+    :return: bool (True - прошло более (или ровно) 1 секунды, False - меньше 1 секунды)
+    """
+    if msg_controller.msg_dict.get(current_user.id):
+        if int(msg_controller.msg_dict.get(current_user.id)) + 1 > int(time.time()):
+            return False
+    return True
+
+
+def save_message(login: str, text: str, room: str) -> Message:
+    """
+    Сохраняет в БД новое сообщение.
+    :param login: str (Логин пользователя, написавшего сообщение)
+    :param text: str (Текст сообщения)
+    :param room: str (Название комнаты)
+    :return: Message (Объект класса Message, он уже закомичен в БД)
+    """
+    new_message = Message(login=login, text=text, room=room)
+    db.session.add(new_message)
+    db.session.commit()
+    return new_message
+
 
 @app.route('/dialog_list')
 def dialog_list():
