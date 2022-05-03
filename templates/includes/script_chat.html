@@ -45,6 +45,9 @@
         socket.on('connect', function () {
             socket.emit('join', {room: '{{ room }}'});
         });
+        socket.on('disconnect', function () {
+            socket.emit('disconnect', {room: '{{ room }}'});
+        });
         socket.on('status_join', function (data) {
             $('#chat').val($('#chat').val() + data.msg + '\n');
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
@@ -89,6 +92,10 @@
                 $('#text').val('');
                 socket.emit('text', {msg: text, room: '{{room}}'});
             }
+        });
+        window.addEventListener('beforeunload', (event) => {
+            event.preventDefault();
+             socket.disconnect();
         });
     });
 </script>

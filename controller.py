@@ -14,6 +14,7 @@ class MessageController:
 
 
 msg_controller = MessageController()
+connected_users = set()
 
 
 @app.route('/')
@@ -102,8 +103,14 @@ def join(message):
     if ban_time > datetime.fromtimestamp(int(time.time())) or (
             room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
     join_room(room)
-    text_template = f"""Вы успешно присоеденились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
+    text_template = f"""Вы успешно присоединились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
     emit('status_join', {'msg': text_template, 'room': room}, to=room)
+    connected_users.add(current_user.name)
+
+@socketio.on('disconnect', namespace='/chat')
+@login_required
+def on_disconnect():
+    connected_users.remove(current_user.name)
 
 
 @socketio.on('text', namespace='/chat')
@@ -111,6 +118,7 @@ def join(message):
 def text(message):
     room = message.get('room')
     msg = message['msg'].replace('\n', ' ')
+    current_user.connected_users = connected_users
     _time = datetime.fromtimestamp(int(time.time()))
     if not check_message_can_processed(message, room, _time): return
     if MessageControl(msg).msg_command(): return

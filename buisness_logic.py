@@ -212,9 +212,13 @@ class MessageControl:
         """
         if self.msg.split()[0][1:].lower() in ['msg', 'm']:
             msg = self.msg.split()
-            del msg[0]
-            user_login = msg[0]
-            del msg[0]
+            user_login = msg[1]
+            del msg[0], msg[1]
+            if user_login not in current_user.connected_users:
+                emit('message', {'id': 'id неопределенно',
+                                 'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;  Пользователь не в сети!',
+                                 'user': current_user.name, 'special': True, })
+                return True
             emit('message',
                  {'id': 'id неопределенно', 'msg': f'[<label style="color: #FF8C00">{current_user.name}&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;Я</label>]&nbsp;  {" ".join(msg)}',
                   'user': User.query.filter_by(name=user_login).first().name, 'special': True,},
