@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
-
-{% block title %}
-  Правила - RacoonAnonymous
-{% endblock %}
+{% block title %} Правила - RacoonAnonymous {% endblock %}
 {% block body %}
-
+  {% include 'includes/header.html' %}
+  {% include 'includes/script_chat.html' %}
   {% include 'includes/rules.html' %}
-  <label><small>* Администрация вправе изменять правила в любой момент и без предупрждения.</small></label>
-
+  <p class="fst-italic ps-2">* Администрация вправе изменять правила в любой момент и без предупреждения.</p>
+  {% include 'includes/night_style_follow_msg.html' %}
 {% endblock body %}

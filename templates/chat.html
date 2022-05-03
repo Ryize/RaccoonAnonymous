@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %} Чат анонимных енотов {% endblock %}
 {% block body %}
-  {% include 'includes/script_chat.html' %}
   {% include 'includes/header.html' %}
+  {% include 'includes/script_chat.html' %}
   <div class="container">
     <div class="col-12 text-center mt-2">
       <h1>Анонимный енот</h1>
@@ -11,11 +11,10 @@
   </div>
   <label id="nasukaola"></label>
   {% if ban_time %}
-    <center>Вы заблокированны, оставшееся время блокировки: {{ ban_time }}!</center>
+    <center>Вы заблокированы, оставшееся время блокировки: {{ ban_time }}!</center>
   {% elif room_ban_time %}
-    <center>Вы заблокированны в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
+    <center>Вы заблокированы в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
   {% else %}
-
     <div class="container">
       <div class="row" id="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
@@ -27,7 +26,6 @@
               {% else %}
                 {{ msg.login }}
               {% endif %}
-
               <label style="font-size: 70%; margin-top: 1%;">
                 &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
@@ -69,8 +67,6 @@
               <button class="btn btn-secondary" type="button">Отправить</button>
             </div>
             </div>
-
-
           {% elif mute_time %}
             <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
               <center><h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
@@ -82,7 +78,6 @@
             </div>
           {% endif %}
   {% endif %}
-
   {% include 'includes/counter.html' %}
   {% include 'includes/night_style_follow_msg.html' %}
 {% endblock %}
