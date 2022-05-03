@@ -15,6 +15,7 @@ class MessageController:
 
 msg_controller = MessageController()
 connected_users = set()
+ERROR_DATA_FORMAT: str = 'Ваш логин должен быть не менее 3-х символов и не более 33'
 
 
 @app.route('/')
@@ -24,18 +25,25 @@ def index():
 
 @app.route('/registration', methods=['POST', 'GET'])
 def registration():
-    if request.method == 'POST':
-        rec = request.form
-        if not 3 < len(rec.get('name')) < 33 or not 3 < len(rec.get('password')) < 33:
-            flash('Ваш логин должен быть не менее 3-х символов и не более 33', 'error')
-        else:
-            if captcha.validate():
-                flash('Вы успешно зарегистрировались!', 'success')
-                User.register(rec.get('name'), rec.get('password'), rec.get('email'))
-                return render_template('user_page.html')
-            else:
-                flash('Вы неверно ввели капчу!', 'error')
-    return render_template("registration.html")
+    if request.method == 'GET':
+        return render_template("registration.html")
+    rec = request.form
+    if not 3 < len(rec.get('name')) < 33 or not 3 < len(rec.get('password')) < 33:
+        flash(ERROR_DATA_FORMAT, 'error')
+        return redirect((url_for('registration')))
+    if captcha.validate():
+        try:
+            User.register(rec.get('name'), rec.get('password'), rec.get('email'))
+        except RuntimeError:
+            flash('Пользователь с такими данными уже зарегестрирован!', 'error')
+            return redirect(url_for('registration'))
+        except ValueError:
+            flash(ERROR_DATA_FORMAT, 'error')
+            return redirect(url_for('registration'))
+        flash('Вы успешно зарегистрировались!', 'success')
+        return render_template('user_page.html')
+    else:
+        flash('Вы неверно ввели капчу!', 'error')
 
 
 @app.route('/authorisation', methods=['POST', 'GET'])
@@ -44,11 +52,15 @@ def authorisation():
         rec = request.form
         if captcha.validate():
             if not 3 < len(rec.get('name')) < 33 or not 3 < len(rec.get('password')) < 33:
-                flash('Ваш логин должен быть не менее 3-х символов и не более 33', 'error')
-            if not User.login_user(rec.get('name'), rec.get('password')):
-                flash('Неверный логин или пароль.', 'error')
-            else:
-                return render_template('user_page.html')
+                flash(ERROR_DATA_FORMAT, 'error')
+            try:
+                if not User.login_user(rec.get('name'), rec.get('password')):
+                    flash('Неверный логин или пароль.', 'error')
+                else:
+                    return render_template('user_page.html')
+            except ValueError:
+                flash(ERROR_DATA_FORMAT, 'error')
+                return redirect(url_for('authorisation'))
         else:
             flash('Вы неверно ввели капчу!', 'error')
     return render_template("authorisation.html")
@@ -201,20 +213,26 @@ def get_msg_data() -> tuple:
     return user_name, system
 
 
-def checking_room_exists(room: str):
+def checking_room_exists(room: str) -> bool:
+    """
+    Проверка существования комнаты.
+    :param room: str (Название проверяемой комнаты)
+    :return: bool (True - такая комната существует, False - такой комнаты не существует)
+    """
+    UNDEFINED_ROOM: str = 'Такой комнаты не существует!'
     if room != 'general':
         try:
             room_text, room_number = room.split('_')
         except ValueError:
-            flash('Такой комнаты не существует!', 'error')
+            flash(UNDEFINED_ROOM, 'error')
             return False
         for title, number in all_room.items():
             if room_text == title:
                 if int(room_number) < 1 or int(room_number) > number:
-                    flash('Такой комнаты не существует!', 'error')
+                    flash(UNDEFINED_ROOM, 'error')
                     return False
                 break
         else:
-            flash('Такой комнаты не существует!', 'error')
+            flash(UNDEFINED_ROOM, 'error')
             return False
     return True
