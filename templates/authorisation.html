@@ -1,53 +1,53 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Authorisation
+  Авторизация - RacoonAnonymous
 {% endblock %}
 {% block body %}
-<section class="gradient-custom">
+  <section class="gradient-custom">
     <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
 
-                        <div class="mb-md-5 mt-md-4 pb-5">
+              <div class="mb-md-5 mt-md-4 pb-5">
 
-                            <h2 class="fw-bold mb-2 text-uppercase">Авторизация</h2>
-                            <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль</p>
-                            <form method="post">
-                                <div class="form-outline form-white mb-4">
-                                    <input type="text" id="name" class="form-control form-control-lg" name="name"/>
-                                    <label class="form-label">Логин</label>
-                                </div>
+                <h2 class="fw-bold mb-2 text-uppercase">Авторизация</h2>
+                <p class="text-white-50 mb-5">Пожалуйста введите свой логин и пароль</p>
+                <form method="post">
+                  <div class="form-outline form-white mb-4">
+                    <input type="text" id="name" class="form-control form-control-lg" name="name"/>
+                    <label class="form-label">Логин</label>
+                  </div>
 
-                                <div class="form-outline form-white mb-4">
-                                    <input type="password" id="password" class="form-control form-control-lg"
-                                           name="password"/>
-                                    <label class="form-label">Пароль</label>
-                                </div>
+                  <div class="form-outline form-white mb-4">
+                    <input type="password" id="password" class="form-control form-control-lg"
+                           name="password"/>
+                    <label class="form-label">Пароль</label>
+                  </div>
 
-                                <div class="form-outline form-white mb-4" style="margin-top: 15%;">
-                                    {{ captcha() }}
-                                    <input style="margin-top: 10px;" type="text" class="form-control form-control-lg"
-                                           name="captcha"/>
-                                    <label class="form-label">Капча</label>
-                                </div>
+                  <div class="form-outline form-white mb-4" style="margin-top: 15%;">
+                    {{ captcha() }}
+                    <input style="margin-top: 10px;" type="text" class="form-control form-control-lg"
+                           name="captcha"/>
+                    <label class="form-label">Капча</label>
+                  </div>
 
-                                <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Забыли пароль?</a></p>
+                  <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Забыли пароль?</a></p>
 
-                                <button class="btn btn-outline-light btn-lg px-5" type="submit">Авторизоваться</button>
-                            </form>
-                        </div>
+                  <button class="btn btn-outline-light btn-lg px-5" type="submit">Авторизоваться</button>
+                </form>
+              </div>
 
-                        <div>
-                            <p class="mb-0">У вас нет аккаунта? <a href="/registration" class="text-white-50 fw-bold">Зарегистрироваться</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+              <div>
+                <p class="mb-0">У вас нет аккаунта? <a href="{{ url_for('registration') }}" class="text-white-50 fw-bold">Зарегистрируйтесь!</a>
+                </p>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 {% endblock %}

@@ -119,6 +119,7 @@ def join(message):
     emit('status_join', {'msg': text_template, 'room': room}, to=room)
     connected_users.add(current_user.name)
 
+
 @socketio.on('disconnect', namespace='/chat')
 @login_required
 def on_disconnect():
@@ -135,13 +136,16 @@ def text(message):
     if not check_message_can_processed(message, room, _time): return
     if MessageControl(msg).msg_command(): return
     msg_controller.msg_dict[current_user.id] = int(time.time())
-    if complaint_on_message(msg): emit('message', {'msg': '[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp;Ваша жалоба зарегистрированна!', 'user': current_user.name,
-                                                   'room': message.get('room'), 'special': True}, to=room); return
+    if complaint_on_message(msg): emit('message', {
+        'msg': '[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp;Ваша жалоба зарегистрированна!',
+        'user': current_user.name,
+        'room': message.get('room'), 'special': True}, to=room); return
     new_message = save_message(current_user.name, msg, room)
     if MessageControl(msg).execute_admin_commands(new_message.id, room): return
 
     user_name, system = get_msg_data()
-    emit('message', {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system},
+    emit('message',
+         {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system},
          to=room)
 
 
