@@ -1,6 +1,7 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, AdminIndexView, expose
 from flask_login import current_user
+from flask import redirect, url_for
 from app import app
 from models import db, User, RoomBan, Message, Complaint, BanUser, MuteUser
 
@@ -27,13 +28,13 @@ class RoomBanView(RacoonAnonymousModelView):
 
 
 class UserBanView(RacoonAnonymousModelView):
-    column_filters = ("id", 'login', 'who_banned', 'reason', 'ban_time', )
+    column_filters = ("id", 'login', 'who_banned', 'reason', 'ban_time',)
     column_editable_list = ['reason']
     form_excluded_columns = ['ban_time', 'who_banned']
 
 
 class UserMuteView(RacoonAnonymousModelView):
-    column_filters = ("id", 'login', 'who_muted', 'reason', 'mute_time', )
+    column_filters = ("id", 'login', 'who_muted', 'reason', 'mute_time',)
     column_editable_list = ['reason']
     form_excluded_columns = ['mute_time', 'who_muted']
 
@@ -46,7 +47,7 @@ class MessageView(RacoonAnonymousModelView):
 class ComplaintView(RacoonAnonymousModelView):
     column_filters = ("id", 'login', 'message_id', 'text', 'created_on',)
     column_editable_list = ['agreed_status']
-    form_excluded_columns = ['login', 'message_id', 'text', 'created_on',]
+    form_excluded_columns = ['login', 'message_id', 'text', 'created_on', ]
 
 
 class IndexView(AdminIndexView):

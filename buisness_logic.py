@@ -8,6 +8,9 @@ from flask_login import current_user
 from flask_admin import Admin
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
+NOT_SPECIFIED: str = 'Не указанна!'
+NOT_ID: str = 'id неопределенно'
+
 
 class MessageControl:
     """
@@ -36,7 +39,7 @@ class MessageControl:
             raise ValueError('Недостаточно аргументов у команды')
         command = msg_split[0][1:]
         login = msg_split[1]
-        _time, room, reason = '*', None, 'Не указанна!'
+        _time, room, reason = '*', None, NOT_SPECIFIED
         if len(msg_split) > 2:
             _time = msg_split[2]
             if len(msg_split) > 3 and msg_split[0][1:] == 'rban':
@@ -46,7 +49,7 @@ class MessageControl:
                 reason = ' '.join(msg_split[3:])
         return self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
 
-    def command_ban(self, login: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args,
+    def command_ban(self, login: str, _time: Optional[str] = None, reason: str = NOT_SPECIFIED, *args,
                     **kwargs) -> str:
         """
         Реализует логику команды блокировки (бана).
@@ -66,7 +69,7 @@ class MessageControl:
         if _time == '*': time_ban = f'навсегда'
         return f'<p style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
-    def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = 'Не указанна!', *args,
+    def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = NOT_SPECIFIED, *args,
                      **kwargs) -> str:
         """
         Реализуется логика блокировки пользователя в конкретной комнате.
@@ -86,7 +89,7 @@ class MessageControl:
         if _time == '*': time_rban = f'навсегда'
         return f'<p style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
-    def command_mute(self, login: str, _time: str = None, reason: str = 'Не указанна!', *args, **kwargs) -> str:
+    def command_mute(self, login: str, _time: str = None, reason: str = NOT_SPECIFIED, *args, **kwargs) -> str:
         """
         Реализует логику команды затыкания пользователя (мута, читать сообщения можно, писать нельзя).
         :param login: str (Логин пользователя, которого блокируют)
@@ -185,7 +188,7 @@ class MessageControl:
                 cmd_answer = self._get_cmd_answer(message_id, msg, room)
                 emit('message', cmd_answer, to=room)
                 return True
-            except:
+            except Exception:
                 return False
 
     def _broadcast_command(self, message_id: int, room: str) -> bool:
@@ -215,16 +218,18 @@ class MessageControl:
             user_login = msg[1]
             del msg[0], msg[1]
             if user_login not in current_user.connected_users:
-                emit('message', {'id': 'id неопределенно',
+                emit('message', {'id': NOT_ID,
                                  'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;  Пользователь не в сети!',
                                  'user': current_user.name, 'special': True, })
                 return True
             emit('message',
-                 {'id': 'id неопределенно', 'msg': f'[<label style="color: #FF8C00">{current_user.name}&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;Я</label>]&nbsp;  {" ".join(msg)}',
-                  'user': User.query.filter_by(name=user_login).first().name, 'special': True,},
+                 {'id': NOT_ID,
+                  'msg': f'[<label style="color: #FF8C00">{current_user.name}&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;Я</label>]&nbsp;  {" ".join(msg)}',
+                  'user': User.query.filter_by(name=user_login).first().name, 'special': True, },
                  broadcast=True)
-            emit('message', {'id': 'id неопределенно', 'msg': f'[<label style="color: #FF8C00">Я&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;{user_login}</label>]&nbsp;  {" ".join(msg)}',
-                  'user': current_user.name, 'special': True,})
+            emit('message', {'id': NOT_ID,
+                             'msg': f'[<label style="color: #FF8C00">Я&nbsp;&nbsp;&nbsp;--->&nbsp;&nbsp;&nbsp;{user_login}</label>]&nbsp;  {" ".join(msg)}',
+                             'user': current_user.name, 'special': True, })
             return True
         return False
 
@@ -250,7 +255,7 @@ class MessageControl:
 
     def _preparation_for_rban_command(self, room) -> str:
         """
-        Приводит сообщение, к формату который поддерживает команда rban. Заменяет номер кормнаты через this,
+        Приводит сообщение, к формату который поддерживает команда rban. Заменяет номер текущей комнаты (через this),
         на название комнаты.
         :param room: str (Название комнаты)
         :return: str (Новый текст сообщения)
@@ -312,15 +317,12 @@ def checking_possibility_sending_message(room: str, _time: datetime) -> bool:
     :param _time: datetime (Текущее время)
     :return: bool (True - пользователь может отправлять сообщения, False - проверка/проверки не пройдены)
     """
-    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first() or None
-    user_ban = BanUser.query.filter_by(login=current_user.name).first() or None
-    user_mute = MuteUser.query.filter_by(login=current_user.name).first() or None
-    if user_ban:
-        if user_ban.ban_time > _time: return False
-    if room_ban:
-        if room_ban.ban_end_date > _time: return False
-    if user_mute:
-        if user_mute.mute_time > _time: return False
+    room_ban = RoomBan.query.filter_by(login=current_user.name, room=room).first()
+    user_ban = BanUser.query.filter_by(login=current_user.name).first()
+    user_mute = MuteUser.query.filter_by(login=current_user.name).first()
+    if (user_ban and user_ban.ban_time > _time) or (room_ban and room_ban.ban_end_date > _time) or (
+            user_mute and user_mute.mute_time > _time):
+        return False
     return True
 
 
@@ -390,7 +392,7 @@ def complaint_on_message(msg: str) -> bool:
     """
     Команда жалобы на сообщение.
     :param msg: str (Сообщение на которое пожаловались)
-    :return: bool (True - жалоба записанна в БД)
+    :return: bool (True - жалоба записана в БД)
     """
     msg_split = msg.split()
     if msg_split[0][1:].lower() != 'vote': return False
