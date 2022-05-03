@@ -135,7 +135,7 @@ def text(message):
     if not check_message_can_processed(message, room, _time): return
     if MessageControl(msg).msg_command(): return
     msg_controller.msg_dict[current_user.id] = int(time.time())
-    if complaint_on_message(msg): emit('message', {'msg': '[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp;Ваша жалоба зарегестрированна!', 'user': current_user.name,
+    if complaint_on_message(msg): emit('message', {'msg': '[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp;Ваша жалоба зарегистрированна!', 'user': current_user.name,
                                                    'room': message.get('room'), 'special': True}, to=room); return
     new_message = save_message(current_user.name, msg, room)
     if MessageControl(msg).execute_admin_commands(new_message.id, room): return
