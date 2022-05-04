@@ -120,12 +120,6 @@ def join(message):
     connected_users.add(current_user.name)
 
 
-@socketio.on('disconnect', namespace='/chat')
-@login_required
-def on_disconnect():
-    connected_users.remove(current_user.name)
-
-
 @socketio.on('text', namespace='/chat')
 @login_required
 def text(message):
@@ -147,6 +141,12 @@ def text(message):
     emit('message',
          {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system},
          to=room)
+
+
+@socketio.on('disconnect', namespace='/chat')
+@login_required
+def on_disconnect():
+    connected_users.remove(current_user.name)
 
 
 @app.route('/dialog_list')

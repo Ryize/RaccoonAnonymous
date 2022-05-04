@@ -183,6 +183,7 @@ class MessageControl:
         """
         if User.query.filter_by(name=current_user.name).first().admin_status:
             if self._broadcast_command(message_id, room): return True
+            if self._clearchat_command(message_id, room): return True
             try:
                 msg = self._preparation_for_rban_command(room)
                 cmd_answer = self._get_cmd_answer(message_id, msg, room)
@@ -204,6 +205,32 @@ class MessageControl:
             emit('message',
                  {'id': message_id, 'msg': '<strong>' + ' '.join(msg) + '</strong>',
                   'user': 'Предводитель Енотов', 'room': room, 'system': True},
+                 broadcast=True)
+            return True
+        return False
+
+    def _clearchat_command(self, message_id: int, room: str) -> bool:
+        """
+        Удаляет все сообщения из комнаты.
+        :param message_id: int (id Сообщения)
+        :param room: str (Название комнаты)
+        :return: bool (True - сообщения успешно удалены, False - введённая команда не clearchat или cc)
+        """
+        if self.msg.split()[0][1:].lower() in ['clearchat', 'cc']:
+            msg = self.msg.split()
+            if len(msg) == 2:
+                room = msg[1]
+            Message.query.filter_by(room=room).delete()
+            db.session.commit()
+            emit('message',
+                 {'id': message_id,
+                  'msg': f'<strong>Сообщения в этой комнате были очищены Администратором {current_user.name}</strong>',
+                  'user': '[<label style="color: #FFA07A">Система</label>]', 'room': room, 'system': True},
+                 to=room)
+            emit('message',
+                 {'id': message_id,
+                  'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp; Чат {room} успешно очищен!',
+                  'user': current_user.name, 'room': room, 'special': True},
                  broadcast=True)
             return True
         return False
