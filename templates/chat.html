@@ -22,12 +22,10 @@
           {% for msg in all_msg %}
             <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
               {% if User.query.filter_by(name=msg.login).first().admin_status %}
-                <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}
+                <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
               {% else %}
-                {{ msg.login }}
+                {{ msg.login }}:
               {% endif %}
-              <label style="font-size: 70%; margin-top: 1%;">
-                &nbsp;{{ moment(msg.created_on).fromNow() }}</label>:
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
             </div>
           {% endfor %}
