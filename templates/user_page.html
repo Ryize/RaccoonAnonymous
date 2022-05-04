@@ -2,11 +2,23 @@
 {% block title %} Профиль {{ current_user.name }} - RacoonAnonymous   {% endblock %}
 {% block body %}
   {% include 'includes/header.html' %}
+  <style>
+  body{
+      {#filter: invert(100%);#}
+  }
+  </style>
+  <script>
+      $(document).ready(function () {
+          document.getElementById("check_night").addEventListener("click", function () {
+              document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
+          });
+      });
+  </script>
+  <label id="nasukaola"></label>
   <section class="about_user">
     <div class="container p-5">
       <div class="row g-4">
         <div class="col-sm-6">
-          <div class="card">
             <div class="card-body text-center">
               <h5 class="card-title">Аватарочка</h5>
               <div class="ava">
@@ -16,10 +28,8 @@
                 <a href="#" class="btn btn-light">Изменить аватар</a>
               </div>
             </div>
-          </div>
         </div>
         <div class="col-sm-6">
-          <div class="card ">
             <div class="card-body text-center">
               <h5 class="card-title">Пару слов о себе:</h5>
               <p class="card-text"><em>Я копаюсь на помойках, как червяк
@@ -32,7 +42,6 @@
                 Кому нужен старый никудышный дед?</em></p>
               <a href="#" class="btn btn-light">Добавить изменения</a>
             </div>
-          </div>
         </div>
       </div>
     </div>
