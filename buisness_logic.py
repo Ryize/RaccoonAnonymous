@@ -51,7 +51,7 @@ class MessageControl:
                 elif len(msg_split) > 3 and msg_split[0][1:] not in ['broadcast', 'bc']:
                     reason = ' '.join(msg_split[3:])
             msg = self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
-            emit('message', {'id': new_message_id, 'user': '', 'msg': msg, 'room': room, 'system': True},to=room)
+            emit('message', {'id': new_message_id, 'user': '', 'msg': msg, 'room': room, 'system': True}, to=room)
             return True
         except IndexError:
             return False
