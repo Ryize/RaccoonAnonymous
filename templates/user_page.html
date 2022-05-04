@@ -2,11 +2,6 @@
 {% block title %} Профиль {{ current_user.name }} - RacoonAnonymous   {% endblock %}
 {% block body %}
   {% include 'includes/header.html' %}
-  <style>
-  body{
-      {#filter: invert(100%);#}
-  }
-  </style>
   <script>
       $(document).ready(function () {
           document.getElementById("check_night").addEventListener("click", function () {
