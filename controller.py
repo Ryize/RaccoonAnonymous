@@ -135,7 +135,7 @@ def text(message):
         'user': current_user.name,
         'room': message.get('room'), 'special': True}, to=room); return
     new_message = save_message(current_user.name, msg, room)
-    if MessageControl(msg).execute_admin_commands(new_message.id, room): return
+    if MessageControl(msg).auto_command(new_message.id, room): return
 
     user_name, system = get_msg_data()
     emit('message',

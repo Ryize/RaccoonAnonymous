@@ -29,25 +29,32 @@ class MessageControl:
             'unwarn': self.command_unwarn,
         }
 
-    def auto_command(self) -> str:
+    def auto_command(self, new_message_id: int, room: str) -> bool:
         """
         Автоматически определяет и вызывает нужную команду. Команды записаны в self._commands.
         :return: str (Текст, после выполнения команды)
         """
         msg_split = self.msg.split()
-        if len(msg_split) < 2:
+        if len(msg_split) < 1:
             raise ValueError('Недостаточно аргументов у команды')
-        command = msg_split[0][1:]
-        login = msg_split[1]
-        _time, room, reason = '*', None, NOT_SPECIFIED
-        if len(msg_split) > 2:
-            _time = msg_split[2]
-            if len(msg_split) > 3 and msg_split[0][1:] == 'rban':
-                room = msg_split[3]
-                reason = ' '.join(msg_split[4:])
-            elif len(msg_split) > 3 and msg_split[0][1:] not in ['broadcast', 'bc']:
-                reason = ' '.join(msg_split[3:])
-        return self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
+        try:
+            command = msg_split[0][1:]
+
+            if self.execute_admin_commands(new_message_id, room): return True
+            _time, room, reason = '*', None, NOT_SPECIFIED
+            login = msg_split[1]
+            if len(msg_split) > 2:
+                _time = msg_split[2]
+                if len(msg_split) > 3 and msg_split[0][1:] == 'rban':
+                    room = msg_split[3]
+                    reason = ' '.join(msg_split[4:])
+                elif len(msg_split) > 3 and msg_split[0][1:] not in ['broadcast', 'bc']:
+                    reason = ' '.join(msg_split[3:])
+            msg = self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
+            emit('message', {'id': new_message_id, 'user': '', 'msg': msg, 'room': room, 'system': True},to=room)
+            return True
+        except IndexError:
+            return False
 
     def command_ban(self, login: str, _time: Optional[str] = None, reason: str = NOT_SPECIFIED, *args,
                     **kwargs) -> str:
@@ -184,6 +191,7 @@ class MessageControl:
         if User.query.filter_by(name=current_user.name).first().admin_status:
             if self._broadcast_command(message_id, room): return True
             if self._clearchat_command(message_id, room): return True
+            if self._delmsg_command(message_id, room): return True
             try:
                 msg = self._preparation_for_rban_command(room)
                 cmd_answer = self._get_cmd_answer(message_id, msg, room)
@@ -230,6 +238,26 @@ class MessageControl:
             emit('message',
                  {'id': message_id,
                   'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp; Чат {room} успешно очищен!',
+                  'user': current_user.name, 'room': room, 'special': True},
+                 broadcast=True)
+            return True
+        return False
+
+    def _delmsg_command(self, message_id: int, room: str) -> bool:
+        """
+        Удаляет сообщение по id.
+        :param message_id: int (id Сообщения)
+        :param room: str (Название комнаты)
+        :return: bool (True - сообщение успешно удалено, False - введённая команда не delmsg/dmsg/dm)
+        """
+        if self.msg.split()[0][1:].lower() in ['delmsg', 'dmsg', 'dm']:
+            msg = self.msg.split()
+            removed_message_id = msg[1]
+            Message.query.filter_by(id=removed_message_id).delete()
+            db.session.commit()
+            emit('message',
+                 {'id': message_id,
+                  'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp; Сообщение {removed_message_id} успешно удалено!',
                   'user': current_user.name, 'room': room, 'special': True},
                  broadcast=True)
             return True
