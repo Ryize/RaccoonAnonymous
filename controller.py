@@ -43,7 +43,7 @@ def registration():
             flash(ERROR_DATA_FORMAT, 'error')
             return redirect(url_for('registration'))
         flash('Вы успешно зарегистрировались!', 'success')
-        return render_template('user_page.html')
+        return redirect(url_for('user_page'))
     else:
         flash('Вы неверно ввели капчу!', 'error')
 
@@ -59,7 +59,7 @@ def authorisation():
                 if not User.login_user(rec.get('name'), rec.get('password')):
                     flash('Неверный логин или пароль.', 'error')
                 else:
-                    return render_template('user_page.html')
+                    return redirect(url_for('user_page'))
             except ValueError:
                 flash(ERROR_DATA_FORMAT, 'error')
                 return redirect(url_for('authorisation'))
@@ -71,6 +71,16 @@ def authorisation():
 @app.route('/user_page', methods=['GET', 'POST'])
 @login_required
 def user_page():
+    if request.method == 'POST':
+        user_description = request.form.get('description')
+        if not user_description:
+            flash('Не верные данные!')
+            return redirect(url_for('user_page'))
+        user = User.query.get(current_user.id)
+        user.description = description
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('user_page'))
     avatar_file = request.files.get('avatar')
     if avatar_file and allowed_file(avatar_file.filename):
         filename = secure_filename(avatar_file.filename)
@@ -80,7 +90,8 @@ def user_page():
         db.session.add(user)
         db.session.commit()
         flash('Аватарка успешно изменена!', 'success')
-    avatar = '/'+os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
+    avatar = '/' + os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
+    print(avatar)
     return render_template("user_page.html", avatar=avatar)
 
 

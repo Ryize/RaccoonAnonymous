@@ -18,11 +18,11 @@ moment = Moment(app)
 migrate_bd = Migrate(app, db)
 
 UPLOAD_FOLDER = 'static/uploads/avatar/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app.config['SECRET_KEY']: str = str(uuid.uuid4())
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Макс размер 16мбайт
+app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024  # Макс размер 8мбайт
 app.config['SQLALCHEMY_DATABASE_URI']: str = 'sqlite:///bd.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']: bool = True
 app.config['CAPTCHA_ENABLE'] = True

@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True, default='Здесь рассказ о себе (но мне лень его менять)!')
     warn = db.Column(db.Integer, default=0)
     admin_status = db.Column(db.Boolean, default=False)
     banned = db.relationship('BanUser', backref='user')
