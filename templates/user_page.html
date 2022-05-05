@@ -12,12 +12,29 @@
             <div class="ava">
               <img src="{{ avatar }}" class="img-responsive" alt=”Аватар”/>
             </div>
-            <div class="text-center mt-3">
-              <form enctype="multipart/form-data" method="post">
-                <p for="file-input">Изменить аватарку</p>
-                <input id="file-input" type="file" name="avatar" accept="image/*"><br>
-                <input type="submit" value="Сохранить" class="btn btn-primary">
-              </form>
+
+            <div class="text-center pt-5">
+
+              <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModalA">
+                Изменить аватарку
+              </button>
+            </div>
+            <div class="modal fade" id="exampleModalA" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header pt-3">
+                    <h5 class="modal-title " id="exampleModalLabel">Изменить аватрку</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                  </div>
+                    <div class="text-center mt-3 mb-3 ">
+                      <form enctype="multipart/form-data" method="post">
+                        <input class="btn btn-light mb-2" id="file-input" type="file" name="avatar" accept="image/*"><br>
+                        <input class="btn btn-light" type="submit" value="Сохранить">
+                      </form>
+                    </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -32,7 +49,7 @@
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header pt-3">
                     <h5 class="modal-title " id="exampleModalLabel">О себе</h5>
