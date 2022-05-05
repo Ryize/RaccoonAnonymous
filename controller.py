@@ -72,26 +72,27 @@ def authorisation():
 @login_required
 def user_page():
     if request.method == 'POST':
+        avatar_file = request.files.get('avatar')
+        if avatar_file and allowed_file(avatar_file.filename):
+            filename = secure_filename(avatar_file.filename)
+            avatar_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user = User.query.get(current_user.id)
+            user.avatar = filename
+            db.session.add(user)
+            db.session.commit()
+            flash('Аватарка успешно изменена!', 'success')
+            return redirect(url_for('user_page'))
+
         user_description = request.form.get('description')
         if not user_description:
-            flash('Не верные данные!')
+            flash('Неверные данные!')
             return redirect(url_for('user_page'))
         user = User.query.get(current_user.id)
         user.description = user_description
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('user_page'))
-    avatar_file = request.files.get('avatar')
-    if avatar_file and allowed_file(avatar_file.filename):
-        filename = secure_filename(avatar_file.filename)
-        avatar_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        user = User.query.get(current_user.id)
-        user.avatar = filename
-        db.session.add(user)
-        db.session.commit()
-        flash('Аватарка успешно изменена!', 'success')
     avatar = '/' + os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
-    print(avatar)
     return render_template("user_page.html", avatar=avatar)
 
 
