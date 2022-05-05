@@ -53,7 +53,7 @@ class MessageControl:
             msg = self._commands[msg_split[0][1:]](command=command, login=login, _time=_time, room=room, reason=reason)
             emit('message', {'id': new_message_id, 'user': '', 'msg': msg, 'room': room, 'system': True}, to=room)
             return True
-        except IndexError:
+        except (IndexError, KeyError):
             return False
 
     def command_ban(self, login: str, _time: Optional[str] = None, reason: str = NOT_SPECIFIED, *args,
