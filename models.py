@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     banned = db.relationship('BanUser', backref='user')
     muted = db.relationship('MuteUser', backref='user')
     email = db.Column(db.Text, unique=True, nullable=True)
+    avatar = db.Column(db.Text, nullable=True, default='racoon_standart.jpg')
 
     @staticmethod
     def login_user(name: str, password: str) -> Union[bool, ValueError]:

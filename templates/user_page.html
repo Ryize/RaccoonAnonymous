@@ -3,9 +3,9 @@
 {% block body %}
   {% include 'includes/header.html' %}
   <style>
-  body{
+      body {
       {#filter: invert(100%);#}
-  }
+      }
   </style>
   <script>
       $(document).ready(function () {
@@ -19,29 +19,33 @@
     <div class="container p-5">
       <div class="row g-4">
         <div class="col-sm-6">
-            <div class="card-body text-center">
-              <h5 class="card-title">Аватарочка</h5>
-              <div class="ava">
-                <img src="static/img/racoon_standart.jpg" class="img-responsive" alt=”Аватар”/>
-              </div>
-              <div class="text-center mt-3">
-                <a href="#" class="btn btn-light">Изменить аватар</a>
-              </div>
+          <div class="card-body text-center">
+            <h5 class="card-title">Аватарочка</h5>
+            <div class="ava">
+              <img src="{{ avatar }}" class="img-responsive" alt=”Аватар”/>
             </div>
+            <div class="text-center mt-3">
+              <form enctype="multipart/form-data" method="post">
+                <label for="file-input">Изменить аватарку</label>
+                <input id="file-input" type="file" name="avatar" accept="image/*"><br>
+                <input type="submit" value="Сохранить" class="btn btn-primary">
+              </form>
+            </div>
+          </div>
         </div>
         <div class="col-sm-6">
-            <div class="card-body text-center">
-              <h5 class="card-title">Пару слов о себе:</h5>
-              <p class="card-text"><em>Я копаюсь на помойках, как червяк
-                С детства жизнь моя наперекосяк
-                Канализационный люк - моя дверь
-                Но я счастлив по-своему, поверь
-                Двадцать лет назад сгорел родной мой дом:
-                Документы, деньги - все сгорело в нем
-                И теперь я побираюсь двадцать лет
-                Кому нужен старый никудышный дед?</em></p>
-              <a href="#" class="btn btn-light">Добавить изменения</a>
-            </div>
+          <div class="card-body text-center">
+            <h5 class="card-title">Пару слов о себе:</h5>
+            <p class="card-text"><em>Я копаюсь на помойках, как червяк
+              С детства жизнь моя наперекосяк
+              Канализационный люк - моя дверь
+              Но я счастлив по-своему, поверь
+              Двадцать лет назад сгорел родной мой дом:
+              Документы, деньги - все сгорело в нем
+              И теперь я побираюсь двадцать лет
+              Кому нужен старый никудышный дед?</em></p>
+            <a href="#" class="btn btn-light">Добавить изменения</a>
+          </div>
         </div>
       </div>
     </div>

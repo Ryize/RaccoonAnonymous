@@ -1,10 +1,12 @@
 from datetime import datetime
-import time
+import time, os
 from flask import render_template, request, flash, url_for, redirect, session
 from flask_login import login_required, logout_user, current_user
 from flask_socketio import SocketIO, join_room, leave_room, emit, send, rooms
 
-from app import app, db, socketio, all_room, captcha
+from werkzeug.utils import secure_filename
+
+from app import app, db, socketio, all_room, captcha, ALLOWED_EXTENSIONS
 from models import *
 from buisness_logic import *
 
@@ -66,9 +68,20 @@ def authorisation():
     return render_template("authorisation.html")
 
 
-@app.route('/user_page')
+@app.route('/user_page', methods=['GET', 'POST'])
+@login_required
 def user_page():
-    return render_template("user_page.html")
+    avatar_file = request.files.get('avatar')
+    if avatar_file and allowed_file(avatar_file.filename):
+        filename = secure_filename(avatar_file.filename)
+        avatar_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        user = User.query.get(current_user.id)
+        user.avatar = filename
+        db.session.add(user)
+        db.session.commit()
+        flash('Аватарка успешно изменена!', 'success')
+    avatar = '/'+os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
+    return render_template("user_page.html", avatar=avatar)
 
 
 @app.route('/contacts')
@@ -240,3 +253,8 @@ def checking_room_exists(room: str) -> bool:
             flash(UNDEFINED_ROOM, 'error')
             return False
     return True
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
