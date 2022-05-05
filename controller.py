@@ -77,7 +77,7 @@ def user_page():
             flash('Не верные данные!')
             return redirect(url_for('user_page'))
         user = User.query.get(current_user.id)
-        user.description = description
+        user.description = user_description
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('user_page'))

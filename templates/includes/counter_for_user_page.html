@@ -1,0 +1,44 @@
+<script>
+    $(document).ready(function () {
+        document.getElementById("check_night").addEventListener("click", function () {
+            document.getElementsByTagName('body')[0].classList.toggle("sicinga_pesamila");
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("text").limit("#charsLeft", 500); // и число не строкой
+    });
+    $('textarea').keyup(function () {
+
+        var characterCount = $(this).val().length,
+            current = $('#current'),
+            maximum = $('#maximum'),
+            theCount = $('#the-count');
+
+        current.text(characterCount);
+
+        if (characterCount > 150 && characterCount < 200) {
+            current.css('color', '#600000');
+        }
+        if (characterCount > 201 && characterCount < 250) {
+            current.css('color', '#700000');
+        }
+        if (characterCount > 251 && characterCount < 280) {
+            current.css('color', '#c00');
+        }
+        if (characterCount > 281 && characterCount < 300) {
+            current.css('color', '#d00');
+        }
+        if (characterCount > 299) {
+            current.css('color', '#e00');
+            maximum.css('color', '#e00');
+            current.css('color', '#e00');
+            theCount.css('font-weight', 'bold');
+        } else {
+            maximum.css('color', '#666');
+            theCount.css('font-weight', 'normal');
+        }
+    });
+</script>

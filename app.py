@@ -57,4 +57,4 @@ if __name__ == '__main__':
     from admin import admin
     from controller import app
 
-    socketio.run(app, debug=True, port=5000)
+    socketio.run(app, debug=True, port=5011)
