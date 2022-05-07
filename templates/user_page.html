@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %} Профиль {{ current_user.name }} - RacoonAnonymous   {% endblock %}
+{% block title %} Профиль {{ user.name }} - RacoonAnonymous   {% endblock %}
 {% block body %}
   {% include 'includes/header.html' %}
   <label id="nasukaola"></label>
@@ -12,48 +12,52 @@
             <div class="ava">
               <img src="{{ avatar }}" class="img-responsive" alt=”Аватар”/>
             </div>
-            <div class="text-center mt-3">
-              <form enctype="multipart/form-data" method="post">
-                <p for="file-input">Изменить аватарку</p>
-                <input id="file-input" type="file" name="avatar" accept="image/*"><br>
-                <input type="submit" value="Сохранить" class="btn btn-primary">
-              </form>
-            </div>
+            {% if user.id == current_user.id %}
+              <div class="text-center mt-3">
+                <form enctype="multipart/form-data" method="post">
+                  <p for="file-input">Изменить аватарку</p>
+                  <input id="file-input" type="file" name="avatar" accept="image/*"><br>
+                  <input type="submit" value="Сохранить" class="btn btn-primary">
+                </form>
+              </div>
+            {% endif %}
           </div>
         </div>
         <div class="col-sm-6">
           <div class="card-body text-center">
             <h5 class="card-title">Пару слов о себе:</h5>
-            <p class="card-text text-break"><em>{{ current_user.description }}</em></p>
-            <div class="text-center pb-5">
-              <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Добавить описание
-              </button>
-            </div>
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header pt-3">
-                    <h5 class="modal-title " id="exampleModalLabel">О себе</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                  </div>
-                  <form method="post">
-                    <div class="modal-body">
+            <p class="card-text text-break"><em>{{ user.description }}</em></p>
+            {% if user.id == current_user.id %}
+              <div class="text-center pb-5">
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Добавить описание
+                </button>
+              </div>
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header pt-3">
+                      <h5 class="modal-title " id="exampleModalLabel">О себе</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <form method="post">
+                      <div class="modal-body">
                     <textarea class="form-control" name="description" cols="30" rows="4"
                               placeholder="Напиши о себе" maxlength="300"></textarea>
-                      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
-                        <label id="the-count"><small><span id="current">0</span> <span
-                            id="maximum">/ 300 </span></small></label>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
+                          <label id="the-count"><small><span id="current">0</span> <span
+                              id="maximum">/ 300 </span></small></label>
+                        </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Сохранить</button>
-                    </div>
-                  </form>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Сохранить</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
+            {% endif %}
           </div>
         </div>
       </div>

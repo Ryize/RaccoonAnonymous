@@ -21,10 +21,11 @@
              style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
           {% for msg in all_msg %}
             <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
-              {% if User.query.filter_by(name=msg.login).first().admin_status %}
+            {% set user = User.query.filter_by(name=msg.login).first() %}
+              {% if user.admin_status %}
                 <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
               {% else %}
-                {{ msg.login }}:
+                <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button" target="_blank">{{ msg.login }}</label>:
               {% endif %}
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
             </div>

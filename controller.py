@@ -93,7 +93,18 @@ def user_page():
         db.session.commit()
         return redirect(url_for('user_page'))
     avatar = '/' + os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
-    return render_template("user_page.html", avatar=avatar)
+    user = User.query.get(current_user.id)
+    return render_template("user_page.html", avatar=avatar, user=user)
+
+
+@app.route('/profile/<int:id>')
+def profile(id):
+    user = User.query.get(id)
+    if not user:
+        flash('Пользователь не найден!', 'error')
+        return redirect(url_for('user_page'))
+    avatar = '/' + os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
+    return render_template("user_page.html", avatar=avatar, user=user)
 
 
 @app.route('/contacts')
@@ -164,7 +175,7 @@ def text(message):
 
     user_name, system = get_msg_data()
     emit('message',
-         {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system},
+         {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system, },
          to=room)
 
 
