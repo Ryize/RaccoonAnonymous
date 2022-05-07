@@ -54,18 +54,25 @@
         });
         socket.on('message', function (data) {
             let msg = document.createElement('div');
+            let login = document.createElement('label');
+            let msg_data = document.createElement('label');
             let inner = document.getElementById('chat');
             if (data.system === true) {
-                msg.innerHTML = data.user + '&nbsp;&nbsp;&nbsp;' + data.msg;
+                login.innerHTML = data.user
+                msg.appendChild(login)
+                msg_data.innerHTML = '&nbsp;&nbsp;&nbsp;' + data.msg;
             } else if (data.special === true) {
                 if (data.user === '{{ current_user.name }}') {
                     msg.innerHTML = data.msg
                 }
             } else {
-                msg.innerHTML = data.user
-                msg.innerHTML += ' &nbsp;&nbsp;&nbsp;'
-                msg.innerText += data.msg;
+                login.innerHTML = data.user
+                msg.appendChild(login)
+                msg_data.innerHTML = ' &nbsp;&nbsp;&nbsp;'
+                msg_data.innerText += data.msg;
+                msg.appendChild(msg_data)
             }
+            login.style = 'cursor: pointer;'
             msg.classList = 'fs-4 text-break';
             msg.style = 'font-size: 70%; margin-top: 0.5%'
             msg.title = 'id сообщения: ' + data.id
@@ -98,4 +105,8 @@
              socket.disconnect();
         });
     });
+
+    function get_profile(profile_user_url){
+        window.open(profile_user_url, '_blank');
+    }
 </script>
