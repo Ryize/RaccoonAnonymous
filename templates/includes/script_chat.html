@@ -61,6 +61,7 @@
                 login.innerHTML = data.user
                 msg.appendChild(login)
                 msg_data.innerHTML = '&nbsp;&nbsp;&nbsp;' + data.msg;
+                msg.appendChild(msg_data)
             } else if (data.special === true) {
                 if (data.user === '{{ current_user.name }}') {
                     msg.innerHTML = data.msg
