@@ -65,6 +65,7 @@ class MessageControl:
         :param reason: str (Причина блокировки)
         :return: str (Информация - кто, кого, за что и на сколько заблокировал)
         """
+        if not current_user.admin_status: return False
         dt_object = self.__convert_time(_time)
         user_ban = BanUser.query.filter_by(login=login, who_banned=current_user.id).first()
         if not user_ban:
@@ -86,6 +87,7 @@ class MessageControl:
         :param reason: str (Причина блокировки)
         :return: str (Информация - кто, кого, за что и на сколько заблокировал)
         """
+        if not current_user.admin_status: return False
         dt_object = self.__convert_time(_time)
         user = RoomBan.query.filter_by(login=login, room=room).first()
         if not user: user = RoomBan(login=login, room=room, reason=reason, ban_end_date=dt_object)
@@ -104,6 +106,7 @@ class MessageControl:
         :param reason: str (Причина мута)
         :return: str (Информация - кто, кого, за что и на сколько замутил)
         """
+        if not current_user.admin_status: return False
         dt_object = self.__convert_time(_time)
 
         user_mute = MuteUser.query.filter_by(login=login, who_muted=current_user.id).first()
@@ -122,6 +125,7 @@ class MessageControl:
         :param login: str (Логин пользователя)
         :return: str (Информация по предупреждению)
         """
+        if not current_user.admin_status: return False
         user = User.query.filter_by(name=login).first()
         user.warn += 1
         msg = f'<label style="color: #B8860B; font-size: 125%;">Администратор {current_user.name} выдал {user.warn} предупреждение пользователю {login} '
@@ -139,6 +143,7 @@ class MessageControl:
         :param login: str (Логин пользователя, с которого снимают блокировку)
         :return: str (Информация по разбану)
         """
+        if not current_user.admin_status: return False
         user = BanUser.query.filter_by(login=login).first()
         if user:
             user.ban_time = self.__convert_time('1')
@@ -155,6 +160,7 @@ class MessageControl:
         :param login: str (Логин пользователя, с которого снимают мут)
         :return: str (Информация по муту)
         """
+        if not current_user.admin_status: return False
         user = MuteUser.query.filter_by(login=login).first()
         if user:
             user.mute_time = self.__convert_time('1')
@@ -171,6 +177,7 @@ class MessageControl:
         :param login: str (Логин пользователя, с которого снимают варн)
         :return: str (Информация по варну)
         """
+        if not current_user.admin_status: return False
         user = User.query.filter_by(name=login).first()
         if user:
             if user.warn > 0:
@@ -207,6 +214,7 @@ class MessageControl:
         :param room: str (Название комнаты)
         :return: bool (True - сообщение успешно отправлено, False - введённая команда не broadcast или bc)
         """
+        if not current_user.admin_status: return False
         if self.msg.split()[0][1:].lower() in ['broadcast', 'bc']:
             msg = self.msg.split()
             del msg[0]
@@ -224,6 +232,7 @@ class MessageControl:
         :param room: str (Название комнаты)
         :return: bool (True - сообщения успешно удалены, False - введённая команда не clearchat или cc)
         """
+        if not current_user.admin_status: return False
         if self.msg.split()[0][1:].lower() in ['clearchat', 'cc']:
             msg = self.msg.split()
             if len(msg) == 2:
@@ -250,6 +259,7 @@ class MessageControl:
         :param room: str (Название комнаты)
         :return: bool (True - сообщение успешно удалено, False - введённая команда не delmsg/dmsg/dm)
         """
+        if not current_user.admin_status: return False
         if self.msg.split()[0][1:].lower() in ['delmsg', 'dmsg', 'dm']:
             msg = self.msg.split()
             removed_message_id = msg[1]

@@ -6,7 +6,7 @@
   <div class="container">
     <div class="col-12 text-center mt-2">
       <h1>Анонимный енот</h1>
-      <label>Комната : {{ room.replace('_', ' №') }}</label>
+      <label>{{ login }}</label>
     </div>
   </div>
   <label id="nasukaola"></label>
@@ -22,28 +22,11 @@
           {% for msg in all_msg %}
             <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
               {% set user = User.query.filter_by(name=msg.login).first() %}
-              {% if user.admin_status %}
-                <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
-              {% else %}
-                <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button"
-                       target="_blank">{{ msg.login }}</label>:
-              {% endif %}
+              <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button"
+                     target="_blank">{{ msg.login }}</label>:
               &nbsp;&nbsp;&nbsp;{{ msg.text }}
             </div>
           {% endfor %}
-          <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong> Добро пожаловать в
-            комнату <em>{{ room.replace('_', ' №') }}</em>. Надеемся ты весело проведешь
-            время!
-          <p>Чтобы получить список правил, введи команду <em>!rules</em>.</p>
-          <p>Если ты видишь, что кто-то нарушил правило используй команду:
-            <em>/vote id-сообщения и дополнительный текст жалобы.</em>
-            Администрация увидит жалобу и примет меры. Чтобы узнать id-сообщения, наведи на него мышкой. Пример: /vote
-            54 меня оскорбили.</p>
-          <p>Если вы хотите написать сообщение другу, но не знаете в какой он комнате, используйте команду /msg (/m).
-            Будет отправлено личное сообщение пользователю, в какой бы комнате он не находился. Использование: <em>/msg
-              логин текст вашего сообщения</em>. Пример: <em>/m
-              myfriend123 Привет, заходи в IT 1, у нас тут спор про PHP!</em></p>
-          </p>
         </div>
       </div>
       <div class="row">

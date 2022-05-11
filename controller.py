@@ -26,6 +26,7 @@ def index():
 
 
 @app.route('/registration', methods=['POST', 'GET'])
+@app.route('/register', methods=['POST', 'GET'])
 def registration():
     if request.method == 'GET':
         return render_template("registration.html")
@@ -49,6 +50,7 @@ def registration():
 
 
 @app.route('/authorisation', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'])
 def authorisation():
     if request.method == 'POST':
         rec = request.form
@@ -69,6 +71,7 @@ def authorisation():
 
 
 @app.route('/user_page', methods=['GET', 'POST'])
+@app.route('/profile', methods=['POST', 'GET'])
 @login_required
 def user_page():
     if request.method == 'POST':
@@ -122,6 +125,14 @@ def rooms():
 def chat():
     room = request.args.get('room') or 'general'
     if not checking_room_exists(room): return redirect(url_for('rooms'))
+
+    private, login = False, False
+    pm = PrivateMessage.query.filter_by(room=room).first()
+    if pm and (pm.login1 == current_user.name or pm.login2 == current_user.name):
+        login = pm.login1
+        if pm.login1 == current_user.name: login = pm.login2
+        private = True
+
     time_now = datetime.fromtimestamp(int(time.time()))
     reason = 'Не указанна!'
     room_ban_time = None
@@ -136,6 +147,11 @@ def chat():
 
     ban_time, reason = get_ban_data(user_ban, time_now, reason)
     mute_time, reason = get_mute_data(user_mute, time_now, reason)
+    if private:
+        return render_template('ls.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
+                               time_now=time_now, mute_time=mute_time, reason=reason, User=User, private=private,
+                               login=login)
+
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
                            time_now=time_now, mute_time=mute_time, reason=reason, User=User)
 
@@ -187,12 +203,27 @@ def on_disconnect():
 
 @app.route('/dialog_list')
 def dialog_list():
-    return render_template("dialog_list.html")
+    pm = PrivateMessage.query.filter_by(login1=current_user.name).all()
+    if not pm:
+        pm = PrivateMessage.query.filter_by(login2=current_user.name).all()
+    return render_template("dialog_list.html", pm=pm)
 
 
 @app.route('/rules')
 def rules():
     return render_template("rules.html")
+
+
+@app.route("/create_ls_room/<login>")
+@login_required
+def create_ls_room(login):
+    room_name = f'{current_user.name}-{login}'
+    pm = PrivateMessage.query.filter_by(room=room_name).first()
+    if pm: return redirect(url_for('chat', room=pm.room))
+    pm = PrivateMessage(login1=current_user.name, login2=login, room=room_name)
+    db.session.add(pm)
+    db.session.commit()
+    return redirect(url_for('rooms'))
 
 
 @app.route("/logout")
@@ -260,21 +291,26 @@ def checking_room_exists(room: str) -> bool:
     :return: bool (True - такая комната существует, False - такой комнаты не существует)
     """
     UNDEFINED_ROOM: str = 'Такой комнаты не существует!'
-    if room != 'general':
-        try:
-            room_text, room_number = room.split('_')
-        except ValueError:
-            flash(UNDEFINED_ROOM, 'error')
-            return False
-        for title, number in all_room.items():
-            if room_text == title:
-                if int(room_number) < 1 or int(room_number) > number:
-                    flash(UNDEFINED_ROOM, 'error')
-                    return False
-                break
-        else:
-            flash(UNDEFINED_ROOM, 'error')
-            return False
+    if room == 'general':
+        return True
+    pm = PrivateMessage.query.filter_by(room=room).first()
+    if pm and (pm.login1 == current_user.name or pm.login2 == current_user.name):
+        return True
+    if Message.query.filter_by(room=room).first(): return True
+    try:
+        room_text, room_number = room.split('_')
+    except ValueError:
+        flash(UNDEFINED_ROOM, 'error')
+        return False
+    for title, number in all_room.items():
+        if room_text == title:
+            if int(room_number) < 1 or int(room_number) > number:
+                flash(UNDEFINED_ROOM, 'error')
+                return False
+            break
+    else:
+        flash(UNDEFINED_ROOM, 'error')
+        return False
     return True
 
 

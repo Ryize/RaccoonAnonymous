@@ -44,6 +44,11 @@
                   <input type="submit" value="Сохранить" class="btn btn-primary">
                 </form>
               </div>
+            {% else %}
+              <form action="{{ url_for('create_ls_room', login=user.name) }}">
+                <input type="hidden" name="login" value="{{ user.name }}">
+                <input type="submit" value="Написать сообщение">
+              </form>
             {% endif %}
           </div>
         </div>
