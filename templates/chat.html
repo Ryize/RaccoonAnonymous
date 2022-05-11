@@ -9,75 +9,77 @@
       <label>Комната : {{ room.replace('_', ' №') }}</label>
     </div>
   </div>
-  <label id="nasukaola"></label>
-  {% if ban_time %}
-    <center>Вы заблокированы, оставшееся время блокировки: {{ ban_time }}!</center>
-  {% elif room_ban_time %}
-    <center>Вы заблокированы в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</center>
-  {% else %}
-    <div class="container">
-      <div class="row" id="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
-             style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
-          {% for msg in all_msg %}
-            <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
-              {% set user = User.query.filter_by(name=msg.login).first() %}
-              {% if user.admin_status %}
-                <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
-              {% else %}
-                <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button"
-                       target="_blank">{{ msg.login }}</label>:
-              {% endif %}
-              &nbsp;&nbsp;&nbsp;{{ msg.text }}
-            </div>
-          {% endfor %}
-          <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong> Добро пожаловать в
-            комнату <em>{{ room.replace('_', ' №') }}</em>. Надеемся ты весело проведешь
-            время!
-          <p>Чтобы получить список правил, введи команду <em>!rules</em>.</p>
-          <p>Если ты видишь, что кто-то нарушил правило используй команду:
-            <em>/vote id-сообщения и дополнительный текст жалобы.</em>
-            Администрация увидит жалобу и примет меры. Чтобы узнать id-сообщения, наведи на него мышкой. Пример: /vote
-            54 меня оскорбили.</p>
-          <p>Если вы хотите написать сообщение другу, но не знаете в какой он комнате, используйте команду /msg (/m).
-            Будет отправлено личное сообщение пользователю, в какой бы комнате он не находился. Использование: <em>/msg
-              логин текст вашего сообщения</em>. Пример: <em>/m
-              myfriend123 Привет, заходи в IT 1, у нас тут спор про PHP!</em></p>
-          </p>
-        </div>
+  <div class="text-center">
+    <label id="nasukaola"></label>
+    {% if ban_time %}
+      <p>Вы заблокированы, оставшееся время блокировки: {{ ban_time }}!</p>
+    {% elif room_ban_time %}
+      <p>Вы заблокированы в этой комнате, оставшееся время блокировки: {{ room_ban_time }}!</p>
+    {% else %}
       </div>
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-          {% if current_user.is_authenticated and not mute_time %}
-            <div class="p-2">
-              <div class="mb-3 rounded-3 w-100">
-                <label for="exampleFormControlTextarea1" class="form-label"></label>
-                <textarea class="form-control" type="text" id="text" placeholder="Введите сообщение..." maxlength="1000"
-                          rows="3"
-                          autofocus></textarea>
+      <div class="container">
+        <div class="row" id="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
+               style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
+            {% for msg in all_msg %}
+              <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
+                {% set user = User.query.filter_by(name=msg.login).first() %}
+                {% if user.admin_status %}
+                  <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
+                {% else %}
+                  <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button"
+                         target="_blank">{{ msg.login }}</label>:
+                {% endif %}
+                &nbsp;&nbsp;&nbsp;{{ msg.text }}
               </div>
-            </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
-              <label id="the-count"><small><span id="current">0</span> <span
-                  id="maximum">/ 1000 </span></small></label>
-            </div>
-            </div>
-            <div class="btn-counter d-grid gap-1 pb-5" id="send">
-              <button class="btn btn-secondary" type="button">Отправить</button>
-            </div>
-            </div>
-          {% elif mute_time %}
-            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8">
-              <center><h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
-              </center>
-            </div>
-          {% else %}
-            <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
-              <h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4>
-            </div>
-          {% endif %}
-  {% endif %}
+            {% endfor %}
+            <p class="lead mt-4">Привет <strong>{{ current_user.name }}</strong> Добро пожаловать в
+              комнату <em>{{ room.replace('_', ' №') }}</em>. Надеемся ты весело проведешь
+              время!
+            <p>Чтобы получить список правил, введи команду <em>!rules</em>.</p>
+            <p>Если ты видишь, что кто-то нарушил правило используй команду:
+              <em>/vote id-сообщения и дополнительный текст жалобы.</em>
+              Администрация увидит жалобу и примет меры. Чтобы узнать id-сообщения, наведи на него мышкой. Пример: /vote
+              54 меня оскорбили.</p>
+            <p>Если ты хочешь написать сообщение другу, но не знаешь в какой он комнате, используй команду /msg (/m).
+              Будет отправлено личное сообщение пользователю, в какой бы комнате он не находился. Использование: <em>/msg
+                логин текст вашего сообщения</em>. Пример: <em>/m
+                myfriend123 Привет, заходи в IT 1, у нас тут спор про PHP!</em></p>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            {% if current_user.is_authenticated and not mute_time %}
+              <div class="p-2">
+                <div class="mb-3 rounded-3 w-100">
+                  <label for="exampleFormControlTextarea1" class="form-label"></label>
+                  <textarea class="form-control" type="text" id="text" placeholder="Введите сообщение..."
+                            maxlength="1000"
+                            rows="3"
+                            autofocus></textarea>
+                </div>
+              </div>
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
+                <label id="the-count"><small><span id="current">0</span> <span
+                    id="maximum">/ 1000 </span></small></label>
+              </div>
+              </div>
+              <div class="btn-counter d-grid gap-1 pb-5" id="send">
+                <button class="btn btn-secondary" type="button">Отправить</button>
+              </div>
+              </div>
+            {% elif mute_time %}
+              <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
+                <h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
+              </div>
+            {% else %}
+              <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
+                <h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4>
+              </div>
+            {% endif %}
+    {% endif %}
   {% include 'includes/counter.html' %}
   {% include 'includes/night_style_follow_msg.html' %}
 {% endblock %}
