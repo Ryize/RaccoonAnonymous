@@ -150,10 +150,10 @@ def chat():
     if private:
         return render_template('ls.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
                                time_now=time_now, mute_time=mute_time, reason=reason, User=User, private=private,
-                               login=login)
+                               login=login, stiky=True)
 
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
-                           time_now=time_now, mute_time=mute_time, reason=reason, User=User)
+                           time_now=time_now, mute_time=mute_time, reason=reason, User=User, stiky=True)
 
 
 @socketio.on('join', namespace='/chat')
