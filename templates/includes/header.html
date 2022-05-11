@@ -15,9 +15,12 @@
             <a class="nav-link" href="{{ url_for('dialog_list') }}"><label>Список диалогов</label></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label >Общий чат</label></a>
+            <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label>Общий чат</label></a>
           </li>
         </ul>
+      </div>
+      <div class = "navbar-text navbar-right">
+       <a class = "navbar-link" href = "{{ url_for('logout') }}?room=general"><label>Выход</label></a>
       </div>
     </div>
   </nav>
