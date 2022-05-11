@@ -176,18 +176,20 @@ def join(message):
 @login_required
 def text(message):
     room = message.get('room')
+    pm = PrivateMessage.query.filter_by(room=room).first()
+    pm_status =  pm and (pm.login1 == current_user.name or pm.login2 == current_user.name)
     msg = message['msg'].replace('\n', ' ')
     current_user.connected_users = connected_users
     _time = datetime.fromtimestamp(int(time.time()))
     if not check_message_can_processed(message, room, _time): return
-    if MessageControl(msg).msg_command(): return
+    if MessageControl(msg).msg_command() and not pm_status: return
     msg_controller.msg_dict[current_user.id] = int(time.time())
     if complaint_on_message(msg): emit('message', {
         'msg': '[<label style="color: #FFA07A">Система</label>]&nbsp;&nbsp;&nbsp;Ваша жалоба зарегистрированна!',
         'user': current_user.name,
         'room': message.get('room'), 'special': True}, to=room); return
     new_message = save_message(current_user.name, msg, room)
-    if MessageControl(msg).auto_command(new_message.id, room): return
+    if MessageControl(msg).auto_command(new_message.id, room) and not pm_status: return
 
     user_name, system = get_msg_data()
     emit('message',
