@@ -3,16 +3,17 @@
 {% block body %}
   {% include 'includes/header.html' %}
   <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center p-5">
-          <div class="list-group">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center p-5">
+        <div class="list-group">
           {% for key, value in all_room.items() %}
-              {% for i in range(value) %}
-                <a href="{{ url_for('chat') }}?room={{ key }}_{{ loop.index }}" class="list-group-item list-group-item-action">{{ key }} №'{{ loop.index }}</a>
-              {% endfor %}
+            {% for i in range(value) %}
+              <a href="{{ url_for('chat') }}?room={{ key }}_{{ loop.index }}"
+                 class="list-group-item list-group-item-action">{{ key }} №'{{ loop.index }}</a>
+            {% endfor %}
           {% endfor %}
-          </div>
         </div>
       </div>
+    </div>
   </div>
 {% endblock %}
