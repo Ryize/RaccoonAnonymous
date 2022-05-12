@@ -282,7 +282,7 @@ class MessageControl:
             msg = self.msg.split()
             user_login = msg[1]
             del msg[0], msg[1]
-            if user_login not in current_user.connected_users:
+            if not current_user.connected_users.get(user_login):
                 emit('message', {'id': NOT_ID,
                                  'msg': f'[<label style="color: #FFA07A">Система</label>]&nbsp;  Пользователь не в сети!',
                                  'user': current_user.name, 'special': True, })
