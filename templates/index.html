@@ -1,3 +1,24 @@
 {% extends 'base.html' %}
 {% block title %} RacoonAnonymous - Главная страница {% endblock %}
-{% block body %}{% endblock %}
+{% block body %}
+<div class="container">
+  <h1 class="text-center mb-3 mt-3">Добро пожаловать в Анонимный чат Енотов</h1>
+  <hr>
+    <h3 class="text-center mt-3 mb-3">Здесь ты можешь интересно провести время общаясь с разными людми на абсолютно разные темы как в
+      общей комнате, в комнатах по интересам или в приватной зоне))) и при этом оставаться абсолютно анонимным!
+      Показывай свою эрудицию и недюженный ум, а так же креативный слог и обрети новых друзей по переписке, открой своё альтер-эго
+      здесь и сейчас!!!
+    <h3>
+  <hr>
+    <h3 class="text-center mb-3 mt-3">Скорее регистрируйся и не забудь оставить описание о себе, что бы другие Еноты могли узнать о тебе побольше!</h3>
+  <hr>
+    <div class="row mt-5 mb-5">
+      <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+        <a class="btn btn-danger btn-lg" href="{{ url_for('registration') }}">Зарегистрироваться</a>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('authorisation') }}">Авторизоваться</a>
+      </div>
+    </div>
+</div>
+{% endblock %}
