@@ -1,41 +1,41 @@
 /*Страница регистрации*/
 .gradient-custom {
-/* fallback for old browsers */
-background: #6a11cb;
+    /* fallback for old browsers */
+    background: #6a11cb;
 
-/* Chrome 10-25, Safari 5.1-6 */
-background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
 
-/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
 }
 
-.bg-image img{
-   height: 30vh;
+.bg-image img {
+    height: 30vh;
 }
 
 
 /*Для аватарки*/
 .img-responsive {
-   overflow:hidden;
-   width: 80%;
-   height: auto;
-   border-radius: 15%;
+    overflow: hidden;
+    width: 80%;
+    height: auto;
+    border-radius: 15%;
 }
 
 .img-responsive2 {
-   overflow:hidden;
-   width: 100%;
-   height: auto;
+    overflow: hidden;
+    width: 100%;
+    height: auto;
 }
 
 /*chat*/
 #chat {
-   height: 89vh;
-   overflow: auto;
-   border: 1px solid #ccc;
+    height: 89vh;
+    overflow: auto;
+    border: 1px solid #ccc;
 }
 
 #chat small label {
-   color: #CD5C5C
+    color: #CD5C5C
 }

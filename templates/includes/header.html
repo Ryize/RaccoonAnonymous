@@ -8,20 +8,35 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
+          {% if not current_user.is_authenticated %}
+            <a class="navbar-brand" href="{{ url_for('registration') }}">RaccoonAnonymous</a>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{{ url_for('rooms') }}"><label>Список комнат</label></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dialog_list') }}"><label>Список диалогов</label></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label>Общий чат</label></a>
-          </li>
+          {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('dialog_list') }}"><label>Список диалогов</label></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('chat') }}?room=general"><label>Общий чат</label></a>
+            </li>
+
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('registration') }}"><label>Зарегистрироваться</label></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('authorisation') }}?room=general"><label>Авторизоваться</label></a>
+            </li>
+          {% endif %}
         </ul>
       </div>
-      <div class = "navbar-text navbar-right">
-       <a class = "navbar-link" href = "{{ url_for('logout') }}?room=general"><label>Выход</label></a>
-      </div>
+      {% if current_user.is_authenticated %}
+        <div class="navbar-text navbar-right">
+          <a class="navbar-link" href="{{ url_for('logout') }}?room=general"><label>Выход</label></a>
+        </div>
+      {% endif %}
     </div>
   </nav>
 </section>
