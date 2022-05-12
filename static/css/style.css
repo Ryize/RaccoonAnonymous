@@ -29,3 +29,13 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
    height: auto;
 }
 
+/*chat*/
+#chat {
+   height: 89vh;
+   overflow: auto;
+   border: 1px solid #ccc;
+}
+
+#chat small label {
+   color: #CD5C5C
+}

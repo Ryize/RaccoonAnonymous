@@ -19,13 +19,12 @@
       </div>
       <div class="container">
         <div class="row" id="row">
-          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat"
-               style="height: 89vh; overflow: auto; border: 1px solid #ccc;">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-start rounded-2" id="chat">
             {% for msg in all_msg %}
               <div class="fs-4 text-break" title="id сообщение: {{ msg.id }}">
                 {% set user = User.query.filter_by(name=msg.login).first() %}
                 {% if user.admin_status %}
-                  <small>[<label style="color: #CD5C5C">Админ</label>]</small> {{ msg.login }}:
+                  <small>[<label>Админ</label>]</small> {{ msg.login }}:
                 {% else %}
                   <label onclick="window.open('{{ url_for('profile', id=user.id) }}', '_blank')" role="button"
                          target="_blank">{{ msg.login }}</label>:
@@ -71,15 +70,16 @@
               </div>
               </div>
             {% elif mute_time %}
-              <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
                 <h4>Вы замучены, оставшееся время: {{ mute_time }}.<br> Причина: <em>{{ reason }}</em></h4>
               </div>
             {% else %}
-              <div class="col-xs-1 col-sm-12 col-md-10 col-lg-8 text-center">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
                 <h4>Вы не <a href="{{ url_for('authorisation') }}">авторизованны!</a></h4>
               </div>
             {% endif %}
     {% endif %}
   {% include 'includes/counter.html' %}
   {% include 'includes/night_style_follow_msg.html' %}
+  <p class="end"></p>
 {% endblock %}
