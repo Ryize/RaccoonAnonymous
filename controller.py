@@ -119,7 +119,7 @@ def contacts():
 def rooms():
     data_room = dict()
     for room, quantity in all_room.items():
-        for i in range(1, quantity+1):
+        for i in range(1, quantity + 1):
             online_user = 0
             for room_online in connected_users.values():
                 if room_online == f'{room}_{i}':
@@ -203,6 +203,11 @@ def text(message):
     new_message = save_message(current_user.name, msg, room)
     if MessageControl(msg).auto_command(new_message.id, room) and not pm_status: return
 
+    if pm_status:
+        pm.created_on = datetime.utcnow()
+        db.session.add(pm)
+        db.session.commit()
+
     user_name, system = get_msg_data()
     emit('message',
          {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system, },
@@ -217,7 +222,7 @@ def on_disconnect():
 
 @app.route('/dialog_list')
 def dialog_list():
-    pm = PrivateMessage.query.filter_by(login1=current_user.name).all()
+    pm = PrivateMessage.query.filter_by(login1=current_user.name).order_by(PrivateMessage.created_on.desc()).all()
     if not pm:
         pm = PrivateMessage.query.filter_by(login2=current_user.name).all()
     return render_template("dialog_list.html", pm=pm, connected_users=connected_users)

@@ -144,6 +144,7 @@ class PrivateMessage(db.Model):
     login1 = db.Column(db.String(32), nullable=False)
     login2 = db.Column(db.String(32), nullable=False)
     room = db.Column(db.String(32), nullable=False)
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 db.create_all()  # Создаёт таблицы, если ещё не созданы
