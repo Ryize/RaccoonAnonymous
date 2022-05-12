@@ -126,6 +126,9 @@ def rooms():
                     online_user += 1
             data_room[f'{room}_{i}'] = online_user
 
+    data_room_tuple = reversed(sorted(data_room.items(), key=lambda item: item[1]))
+    data_room = {k: v for k, v in data_room_tuple}
+
     return render_template("all_room.html", all_room=data_room)
 
 
