@@ -16,7 +16,7 @@ class MessageController:
 
 
 msg_controller = MessageController()
-connected_users = set()
+connected_users = dict()
 ERROR_DATA_FORMAT: str = 'Ваш логин должен быть не менее 3-х символов и не более 33'
 
 
@@ -117,7 +117,16 @@ def contacts():
 
 @app.route('/rooms')
 def rooms():
-    return render_template("all_room.html", all_room=all_room)
+    data_room = dict()
+    for room, quantity in all_room.items():
+        for i in range(1, quantity+1):
+            online_user = 0
+            for room_online in connected_users.values():
+                if room_online == f'{room}_{i}':
+                    online_user += 1
+            data_room[f'{room}_{i}'] = online_user
+
+    return render_template("all_room.html", all_room=data_room)
 
 
 @app.route('/chat', methods=['GET', 'POST'])
@@ -169,7 +178,7 @@ def join(message):
     join_room(room)
     text_template = f"""Вы успешно присоединились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
     emit('status_join', {'msg': text_template, 'room': room}, to=room)
-    connected_users.add(current_user.name)
+    connected_users[current_user.name] = room
 
 
 @socketio.on('text', namespace='/chat')
@@ -177,7 +186,7 @@ def join(message):
 def text(message):
     room = message.get('room')
     pm = PrivateMessage.query.filter_by(room=room).first()
-    pm_status =  pm and (pm.login1 == current_user.name or pm.login2 == current_user.name)
+    pm_status = pm and (pm.login1 == current_user.name or pm.login2 == current_user.name)
     msg = message['msg'].replace('\n', ' ')
     current_user.connected_users = connected_users
     _time = datetime.fromtimestamp(int(time.time()))
@@ -200,7 +209,7 @@ def text(message):
 @socketio.on('disconnect', namespace='/chat')
 @login_required
 def on_disconnect():
-    connected_users.remove(current_user.name)
+    del connected_users[current_user.name]
 
 
 @app.route('/dialog_list')
@@ -208,7 +217,7 @@ def dialog_list():
     pm = PrivateMessage.query.filter_by(login1=current_user.name).all()
     if not pm:
         pm = PrivateMessage.query.filter_by(login2=current_user.name).all()
-    return render_template("dialog_list.html", pm=pm)
+    return render_template("dialog_list.html", pm=pm, connected_users=connected_users)
 
 
 @app.route('/rules')
