@@ -3,6 +3,9 @@
 {% block body %}
   {% include 'includes/header.html' %}
   <label id="nasukaola"></label>
+  {% if current_user.name != user.name %}
+    <h1 class="text-center">{{ user.name }}</h1>
+  {% endif %}
   <section class="about_user">
     <div class="container p-5">
       <div class="row g-4">
@@ -15,27 +18,28 @@
             {% if user.id == current_user.id %}
               <div class="text-center pt-5">
 
-              <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModalA">
-                Изменить аватарку
-              </button>
-            </div>
-            <div class="modal fade" id="exampleModalA" tabindex="-1" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header pt-3">
-                    <h5 class="modal-title " id="exampleModalLabel">Изменить аватарку</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                  </div>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModalA">
+                  Изменить аватарку
+                </button>
+              </div>
+              <div class="modal fade" id="exampleModalA" tabindex="-1" aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header pt-3">
+                      <h5 class="modal-title " id="exampleModalLabel">Изменить аватарку</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
                     <div class="text-center mt-3 mb-3 ">
                       <form enctype="multipart/form-data" method="post">
-                        <input class="btn btn-light mb-2" id="file-input" type="file" name="avatar" accept="image/*"><br>
+                        <input class="btn btn-light mb-2" id="file-input" type="file" name="avatar"
+                               accept="image/*"><br>
                         <input class="btn btn-light" type="submit" value="Сохранить">
                       </form>
                     </div>
+                  </div>
                 </div>
               </div>
-            </div>
             {% else %}
               <form action="{{ url_for('create_ls_room', login=user.name) }}">
                 <input type="hidden" name="login" value="{{ user.name }}">
