@@ -1,3 +1,12 @@
+body {
+    position: relative;
+    margin: 0;
+    color: #fff;
+    /* Растягиваем body по высоте html */
+    min-height: 97vh;
+}
+
+
 /*Страница регистрации*/
 .gradient-custom {
     /* fallback for old browsers */
@@ -12,9 +21,6 @@
 
 /*Общие настройки отступа сделаны по классам секций; если добавляете страницу, создавайте класс секций, дабы
 они отталкивались от зафиксированного футера, и добавляйте их сюда через запятую*/
-.dialog-list-section, .about_user, .privet-room, .main-chat, .all-rooms {
-    padding: 50px 0;
-}
 
 .bg-image img {
     height: 30vh;
@@ -48,8 +54,11 @@
 /*footer*/
 #footer {
     background-color: #f1f1f1;
-
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
+
 #footer div {
     background-color: rgba(0, 0, 0, 0.2);
 }
