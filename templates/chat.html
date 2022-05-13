@@ -60,6 +60,13 @@
                               rows="3"
                               autofocus></textarea>
                   </div>
+                  <script>
+                      $(document).ready(function () {
+                          $(".form-control").emojioneArea({
+                              pickerPosition: "bottom"
+                          });
+                      })
+                  </script>
                 </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
@@ -83,5 +90,6 @@
       {% endif %}
     {% include 'includes/counter.html' %}
     {% include 'includes/night_style_follow_msg.html' %}
+    {% include 'includes/emoji_script.html' %}
   </section>
 {% endblock %}
