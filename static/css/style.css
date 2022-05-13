@@ -10,10 +10,15 @@
     background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
 }
 
+/*Общие настройки отступа сделаны по классам секций; если добавляете страницу, создавайте класс секций, дабы
+они отталкивались от зафиксированного футера, и добавляйте их сюда через запятую*/
+.dialog-list-section, .about_user, .privet-room, .main-chat, .all-rooms {
+    padding: 50px 0;
+}
+
 .bg-image img {
     height: 30vh;
 }
-
 
 /*Для аватарки*/
 .img-responsive {
@@ -41,10 +46,10 @@
 }
 
 /*footer*/
-footer {
+#footer {
     background-color: #f1f1f1;
+
 }
-footer div {
+#footer div {
     background-color: rgba(0, 0, 0, 0.2);
-    color: black;
 }

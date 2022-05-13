@@ -2,38 +2,40 @@
 {% block title %} Список диалогов - RacoonAnonymous {% endblock %}
 {% block body %}
   {% include 'includes/header.html' %}
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center p-5">
-        <div class="list-group">
-          {% if pm %}
-            {% for i in pm %}
-              <a href="{{ url_for('chat') }}?room={{ i.room }}"
-                 class="list-group-item list-group-item-action">
-                {% if i.login1 == current_user.name %}
-                  <label>{{ i.login2 }}</label>
-                  <label class="float-end">
-                    {% if i.login2 in connected_users %}
-                      <label class="text-success"><small>Онлайн</small></label>
-                    {% else %}
-                      <label class="text-danger"><small>Оффлайн</small></label>
-                    {% endif %}
-                  </label>
-                {% else %}
-                  <label>{{ i.login1 }}</label>
-                  <label class="float-end">
-                    {% if i.login1 in connected_users %}
-                      <label class="text-success"><small>Онлайн</small></label>
-                    {% else %}
-                      <label class="text-danger"><small>Оффлайн</small></label>
-                    {% endif %}
-                  </label>
-                {% endif %}
-              </a>
-            {% endfor %}
-          {% endif %}
+  <section class="dialog-list-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center p-5">
+          <div class="list-group">
+            {% if pm %}
+              {% for i in pm %}
+                <a href="{{ url_for('chat') }}?room={{ i.room }}"
+                   class="list-group-item list-group-item-action">
+                  {% if i.login1 == current_user.name %}
+                    <label>{{ i.login2 }}</label>
+                    <label class="float-end">
+                      {% if i.login2 in connected_users %}
+                        <label class="text-success"><small>Онлайн</small></label>
+                      {% else %}
+                        <label class="text-danger"><small>Оффлайн</small></label>
+                      {% endif %}
+                    </label>
+                  {% else %}
+                    <label>{{ i.login1 }}</label>
+                    <label class="float-end">
+                      {% if i.login1 in connected_users %}
+                        <label class="text-success"><small>Онлайн</small></label>
+                      {% else %}
+                        <label class="text-danger"><small>Оффлайн</small></label>
+                      {% endif %}
+                    </label>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}
