@@ -159,13 +159,14 @@ def chat():
 
     ban_time, reason = get_ban_data(user_ban, time_now, reason)
     mute_time, reason = get_mute_data(user_mute, time_now, reason)
+    online = get_room_online(room)
     if private:
         return render_template('ls.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
                                time_now=time_now, mute_time=mute_time, reason=reason, User=User, private=private,
-                               login=login, stiky=True)
+                               login=login, stiky=True, online=online)
 
     return render_template('chat.html', room=room, all_msg=last_msg, ban_time=ban_time, room_ban_time=room_ban_time,
-                           time_now=time_now, mute_time=mute_time, reason=reason, User=User, stiky=True)
+                           time_now=time_now, mute_time=mute_time, reason=reason, User=User, stiky=True, online=online)
 
 
 @socketio.on('join', namespace='/chat')
@@ -179,8 +180,9 @@ def join(message):
     if ban_time > datetime.fromtimestamp(int(time.time())) or (
             room_ban and room_ban.ban_end_date > datetime.fromtimestamp(int(time.time()))): return
     join_room(room)
+    online = get_room_online(room)
     text_template = f"""Вы успешно присоединились к комнате: {room.replace('_', ' №')}.\nЖелаем вам удачи!"""
-    emit('status_join', {'msg': text_template, 'room': room}, to=room)
+    emit('status_join', {'msg': text_template, 'room': room, 'online': online}, to=room)
     connected_users[current_user.name] = room
 
 
@@ -209,13 +211,14 @@ def text(message):
         db.session.commit()
 
     user_name, system = get_msg_data()
+    online = get_room_online(room)
     emit('message',
-         {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system, },
+         {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system,
+          'online': online, },
          to=room)
 
 
 @socketio.on('disconnect', namespace='/chat')
-@login_required
 def on_disconnect():
     del connected_users[current_user.name]
 
@@ -336,3 +339,11 @@ def checking_room_exists(room: str) -> bool:
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+def get_room_online(get_room: Optional[str]):
+    online_user = 0
+    for room_online in connected_users.values():
+        if room_online == get_room:
+            online_user += 1
+    return online_user

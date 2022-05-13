@@ -3,7 +3,7 @@ body {
     margin: 0;
     color: #fff;
     /* Растягиваем body по высоте html */
-    min-height: 97vh;
+    min-height: 100vh;
 }
 
 
