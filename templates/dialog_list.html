@@ -12,20 +12,20 @@
                  class="list-group-item list-group-item-action">
                 {% if i.login1 == current_user.name %}
                   <label>{{ i.login2 }}</label>
-                  <label style="float: right;">
+                  <label class="float-end">
                     {% if i.login2 in connected_users %}
-                      <label style="color: green;"><small>Онлайн</small></label>
+                      <label class="text-success"><small>Онлайн</small></label>
                     {% else %}
-                      <label style="color: red;"><small>Оффлайн</small></label>
+                      <label class="text-danger"><small>Оффлайн</small></label>
                     {% endif %}
                   </label>
                 {% else %}
                   <label>{{ i.login1 }}</label>
-                  <label style="float: right;">
+                  <label class="float-end">
                     {% if i.login1 in connected_users %}
-                      <label style="color: green;"><small>Онлайн</small></label>
+                      <label class="text-success"><small>Онлайн</small></label>
                     {% else %}
-                      <label style="color: red;"><small>Оффлайн</small></label>
+                      <label class="text-danger"><small>Оффлайн</small></label>
                     {% endif %}
                   </label>
                 {% endif %}
