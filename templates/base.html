@@ -22,12 +22,27 @@
   </head>
   <body>
     {% include 'includes/main_page.html' %}
-    {% block body %}{% endblock %}
+    <main>
+      {% block body %}{% endblock %}
+    </main>
     {{ toastr.include_toastr_js() }}
-    <footer class="text-center fixed-bottom" id="footer">
+    <footer class="text-center" id="footer">
       <div class="text-center text-dark p-3">
         © 2022 RaccoonAnonymous
       </div>
     </footer>
+    <script>
+        // Высчитываем высоту footer и делаем соответствующий отступ от main:
+        function footer() {
+            const
+                main = document.getElementsByTagName('body')[0],
+                footer = document.getElementsByTagName('footer')[0]
+
+            main.style.paddingBottom = footer.clientHeight + 'px'
+        }
+
+        window.addEventListener('load', footer);
+        window.addEventListener('resize', footer);
+    </script>
   </body>
 </html>
