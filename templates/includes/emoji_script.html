@@ -1,0 +1,52 @@
+<link rel="stylesheet" type="text/css" href="../static/css_smile/jquery.emojipicker.css">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="../static/js_smile/jquery.emojipicker.js"></script>
+
+  <!-- Emoji Data -->
+  <link rel="stylesheet" type="text/css" href="../static/css_smile/jquery.emojipicker.tw.css">
+  <script type="text/javascript" src="../static/js_smile/jquery.emojis.js"></script>
+
+  <script type="text/javascript">
+      $(document).ready(function (e) {
+
+          $('#text').emojiPicker({
+              iconBackgroundColor: '#FFF',
+          });
+
+          $('#input-custom-size').emojiPicker({
+              width: '100px',
+              height: '200px',
+          });
+
+          $('#input-left-position').emojiPicker({
+              width: '100px',
+              height: '200px',
+              position: 'left'
+          });
+
+          $('#create').click(function (e) {
+              e.preventDefault();
+              $('#text-custom-trigger').emojiPicker({
+                  width: '200px',
+                  height: '200px',
+                  button: false,
+              });
+          });
+
+          $('#toggle').click(function (e) {
+              e.preventDefault();
+              $('#text-custom-trigger').emojiPicker('toggle');
+          });
+
+          $('#destroy').click(function (e) {
+              e.preventDefault();
+              $('#text-custom-trigger').emojiPicker('destroy');
+          })
+
+          // keyup event is fired
+          $(".emojiable-question, .emojiable-option").on("keyup", function () {
+              //console.log("emoji added, input val() is: " + $(this).val());
+          });
+
+      });
+  </script>
