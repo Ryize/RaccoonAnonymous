@@ -2,8 +2,9 @@
 {% block title %} Правила - RacoonAnonymous {% endblock %}
 {% block body %}
   {% include 'includes/header.html' %}
-  {% include 'includes/script_chat.html' %}
   {% include 'includes/rules.html' %}
   <p class="fst-italic ps-2">* Администрация вправе изменять правила в любой момент и без предупреждения.</p>
+  {% include 'includes/counter_for_user_page.html' %}
   {% include 'includes/night_style_follow_msg.html' %}
+  {% include 'includes/script_chat.html' %}
 {% endblock body %}
