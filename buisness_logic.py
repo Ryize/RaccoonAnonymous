@@ -195,17 +195,20 @@ class MessageControl:
         :return: Optional[bool] (None - пользователь не Администратор, True - команда успешно выполнена,
                                 False - что-то пошло не так, команда не выполнена)
         """
-        if User.query.filter_by(name=current_user.name).first().admin_status:
-            if self._broadcast_command(message_id, room): return True
-            if self._clearchat_command(message_id, room): return True
-            if self._delmsg_command(message_id, room): return True
-            try:
-                msg = self._preparation_for_rban_command(room)
-                cmd_answer = self._get_cmd_answer(message_id, msg, room)
-                emit('message', cmd_answer, to=room)
-                return True
-            except Exception:
-                return False
+        try:
+            if User.query.filter_by(name=current_user.name).first().admin_status:
+                if self._broadcast_command(message_id, room): return True
+                if self._clearchat_command(message_id, room): return True
+                if self._delmsg_command(message_id, room): return True
+                try:
+                    msg = self._preparation_for_rban_command(room)
+                    cmd_answer = self._get_cmd_answer(message_id, msg, room)
+                    emit('message', cmd_answer, to=room)
+                    return True
+                except Exception:
+                    return False
+        except IndexError:
+            return True
 
     def _broadcast_command(self, message_id: int, room: str) -> bool:
         """
