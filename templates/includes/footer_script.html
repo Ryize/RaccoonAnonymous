@@ -1,0 +1,13 @@
+<script>
+    // Высчитываем высоту footer и делаем соответствующий отступ от main:
+    function footer() {
+        const
+            main = document.getElementsByTagName('body')[0],
+            footer = document.getElementsByTagName('footer')[0]
+
+        main.style.paddingBottom = footer.clientHeight + 'px'
+    }
+
+    window.addEventListener('load', footer);
+    window.addEventListener('resize', footer);
+</script>

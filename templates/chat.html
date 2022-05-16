@@ -3,7 +3,6 @@
 {% block body %}
   {% include 'includes/header.html' %}
   {% include 'includes/script_chat.html' %}
-
   <section class="main-chat">
     <div class="container">
       <div class="col-12 text-center mt-2">
@@ -62,6 +61,13 @@
                               rows="3"
                               autofocus></textarea>
                   </div>
+                  <script>
+                      $(document).ready(function () {
+                          $(".form-control").emojioneArea({
+                              pickerPosition: "bottom"
+                          });
+                      })
+                  </script>
                 </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pb-4 text-end">
@@ -87,10 +93,8 @@
     {% include 'includes/night_style_follow_msg.html' %}
     {% include 'includes/emoji_script.html' %}
   </section>
-
   <script>
-  let smile = document.getElementsByClassName('emojiPickerIcon')
-  smile.style = 'width: 10px;'
+      let smile = document.getElementsByClassName('emojiPickerIcon')
+      smile.style = 'width: 10px;'
   </script>
-
 {% endblock %}
