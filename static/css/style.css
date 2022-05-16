@@ -6,7 +6,6 @@ body {
     min-height: 100vh;
 }
 
-
 /*Страница регистрации*/
 .gradient-custom {
     /* fallback for old browsers */
@@ -26,9 +25,6 @@ body {
     height: 30vh;
 }
 
-.main-chat {
-    padding: 50px;
-}
 /*Для аватарки*/
 .img-responsive {
     overflow: hidden;

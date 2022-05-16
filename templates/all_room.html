@@ -10,7 +10,7 @@
             {% for room, online in all_room.items() %}
               <a href="{{ url_for('chat') }}?room={{ room }}"
                  class="list-group-item list-group-item-action">{{ room.replace('_', ' №') }}
-                <label style="float: right;"><small>Онлайн: <label
+                <label class="float-end"><small>Онлайн: <label
                     style="color: {% if online == 0 %} red; {% else %} green {% endif %}">{{ online }}</label></small></label></a>
             {% endfor %}
           </div>
