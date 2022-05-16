@@ -49,15 +49,11 @@
             socket.emit('disconnect', {room: '{{ room }}'});
         });
         socket.on('status_disconnect', function (data) {
-            let online = document.getElementById('online');
             socket.emit('disconnect', {room: '{{ room }}'});
-            online.innerText = 'data.online'
         });
         socket.on('status_join', function (data) {
-            let online = document.getElementById('online');
             $('#chat').val($('#chat').val() + data.msg + '\n');
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
-            online.innerText = data.online
         });
         socket.on('message', function (data) {
             let msg = document.createElement('div');
@@ -81,7 +77,9 @@
                 msg_data.innerText += data.msg;
                 msg.appendChild(msg_data)
             }
-            online.innerText = data.online
+            if (!data.pm_status){
+                online.innerText = data.online
+            }
             login.style = 'cursor: pointer;'
             msg.classList = 'fs-4 text-break';
             msg.style = 'font-size: 70%; margin-top: 0.5%'

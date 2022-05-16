@@ -211,10 +211,11 @@ def text(message):
         db.session.commit()
 
     user_name, system = get_msg_data()
-    online = get_room_online(room)
+    online = get_room_online(room) or 1
+
     emit('message',
          {'id': new_message.id, 'msg': msg, 'user': user_name + ': ', 'room': message.get('room'), 'system': system,
-          'online': online, },
+          'online': online, 'pm_status': pm_status,},
          to=room)
 
 
