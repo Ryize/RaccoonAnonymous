@@ -26,6 +26,9 @@ body {
     height: 30vh;
 }
 
+.main-chat {
+    padding: 50px;
+}
 /*Для аватарки*/
 .img-responsive {
     overflow: hidden;
