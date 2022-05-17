@@ -8,7 +8,7 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center p-5">
           <div class="list-group">
             {% for room, online in all_room.items() %}
-              <a href="{{ url_for('chat') }}?room={{ room }}"
+              <a href="{{ url_for('chat') }}?room={{ room }}#row"
                  class="list-group-item list-group-item-action">{{ room.replace('_', ' №') }}
                 <label class="float-end"><small>Онлайн: <label
                     style="color: {% if online == 0 %} red; {% else %} green {% endif %}">{{ online }}</label></small></label></a>

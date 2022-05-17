@@ -77,7 +77,7 @@
                 msg_data.innerText += data.msg;
                 msg.appendChild(msg_data)
             }
-            if (!data.pm_status){
+            if (!data.pm_status) {
                 online.innerText = data.online
             }
             login.style = 'cursor: pointer;'
@@ -110,11 +110,11 @@
         });
         window.addEventListener('beforeunload', (event) => {
             event.preventDefault();
-             socket.disconnect();
+            socket.disconnect();
         });
     });
 
-    function get_profile(profile_user_url){
+    function get_profile(profile_user_url) {
         window.open(profile_user_url, '_blank');
     }
 </script>
