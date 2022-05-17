@@ -73,9 +73,10 @@ class MessageControl:
         user_ban.ban_time, user_ban.reason = dt_object, reason
         db.session.add(user_ban)
         db.session.commit()
+        _time = _time.replace('m', ' минут').replace('h', ' часов').replace('d', ' дней').replace('y', ' лет')
         time_ban = f'на {_time}'
         if _time == '*': time_ban = f'навсегда'
-        return f'<p style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
+        return f'<p style="color: #CD5C5C; font-size: 125%;">Пользователь {login} был заблокирован {time_ban} администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
     def command_rban(self, login: str, room: str, _time: Optional[str] = None, reason: str = NOT_SPECIFIED, *args,
                      **kwargs) -> str:
@@ -94,9 +95,10 @@ class MessageControl:
         user.ban_end_date, user.reason = dt_object, reason
         db.session.add(user)
         db.session.commit()
+        _time = _time.replace('m', ' минут').replace('h', ' часов').replace('d', ' дней').replace('y', ' лет')
         time_rban = f'на {_time}'
         if _time == '*': time_rban = f'навсегда'
-        return f'<p style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
+        return f'<p style="color: #87CEEB; font-size: 125%;">Пользователь {login} был заблокирован в данной комнате {time_rban} администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
     def command_mute(self, login: str, _time: str = None, reason: str = NOT_SPECIFIED, *args, **kwargs) -> str:
         """
@@ -115,9 +117,10 @@ class MessageControl:
         user_mute.mute_time, user_mute.reason = dt_object, reason
         db.session.add(user_mute)
         db.session.commit()
+        _time = _time.replace('m', ' минут').replace('h', ' часов').replace('d', ' дней').replace('y', ' лет')
         time_mute = f'на {_time}'
         if not _time: time_mute = f'навсегда'
-        return f'<p style="color: #87CEEB; font-size: 115%;">Пользователь {login} был замучен {time_mute} Администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
+        return f'<p style="color: #87CEEB; font-size: 115%;">Пользователь {login} выбыл из игры {time_mute} администратором {current_user.name}. <br>Причина: <em>{reason}</em></p>'
 
     def command_warn(self, login: str, *args, **kwargs) -> str:
         """
@@ -192,7 +195,7 @@ class MessageControl:
     def execute_admin_commands(self, message_id: int, room: str) -> Optional[bool]:
         """
         Выполняет команду, если пользователь - администратор.
-        :return: Optional[bool] (None - пользователь не Администратор, True - команда успешно выполнена,
+        :return: Optional[bool] (None - пользователь не администратор, True - команда успешно выполнена,
                                 False - что-то пошло не так, команда не выполнена)
         """
         try:
@@ -244,7 +247,7 @@ class MessageControl:
             db.session.commit()
             emit('message',
                  {'id': message_id,
-                  'msg': f'<strong>Сообщения в этой комнате были очищены Администратором {current_user.name}</strong>',
+                  'msg': f'<strong>Сообщения в этой комнате были очищены администратором {current_user.name}</strong>',
                   'user': '[<label style="color: #FFA07A">Система</label>]', 'room': room, 'system': True},
                  to=room)
             emit('message',
