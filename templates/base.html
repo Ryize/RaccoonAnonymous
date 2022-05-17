@@ -1,3 +1,5 @@
+{{ moment.include_moment() }}
+
 <!DOCTYPE html>
 <html lang="ru">
   <head>
@@ -29,7 +31,7 @@
     {{ toastr.include_toastr_js() }}
     <footer class="text-center" id="footer">
       <div class="text-center text-dark p-3">
-        © 2022 RaccoonAnonymous
+        © {{ moment().format('YYYY') }} RaccoonAnonymous
       </div>
       {% include 'includes/footer_script.html' %}
     </footer>
