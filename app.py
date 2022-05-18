@@ -9,6 +9,9 @@ from flask_moment import Moment
 from flask_sessionstore import Session
 from flask_session_captcha import FlaskSessionCaptcha
 from flask_migrate import Migrate
+import sentry_sdk
+from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -52,10 +55,15 @@ all_room = {
     'IT': 2,
 }
 
+sentry_sdk.init(
+    dsn="https://f0ec0e48675f4065b5212893b3041a32@o1252724.ingest.sentry.io/6418952",
+    integrations=[FlaskIntegration()],
+)
+
 if __name__ == '__main__':
     from models import *
     from admin import admin
     from controller import app
     from error_controller import *
 
-    socketio.run(app, debug=True, port=5005)
+    socketio.run(app, debug=False, port=5005)
