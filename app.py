@@ -13,6 +13,8 @@ import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from config import URL_SENTRY
+
 app = Flask(__name__)
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -56,7 +58,7 @@ all_room = {
 }
 
 sentry_sdk.init(
-    dsn="https://f0ec0e48675f4065b5212893b3041a32@o1252724.ingest.sentry.io/6418952",
+    dsn= URL_SENTRY,
     integrations=[FlaskIntegration()],
 )
 
@@ -66,4 +68,4 @@ if __name__ == '__main__':
     from controller import app
     from error_controller import *
 
-    socketio.run(app, debug=False, port=5005)
+    socketio.run(app, debug=False, port=5000)
