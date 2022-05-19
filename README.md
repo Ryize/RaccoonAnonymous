@@ -37,6 +37,6 @@ URL_SENTRY = "Ваш URL"
 ```
 python3 app.py
 ```
-> Над проектом работают [Ryize](https://github.com/Ryize), [AlexanderZug](https://github.com/AlexanderZug), [Spinist89](https://github.com/Spinist89), [Gaius-Capito](https://github.com/Gaius-Capito).
+> Над проектом работают: [Ryize](https://github.com/Ryize), [AlexanderZug](https://github.com/AlexanderZug), [Spinist89](https://github.com/Spinist89), [Gaius-Capito](https://github.com/Gaius-Capito).
 > 
 > Использование данного проекта в комерческих целях запрещено (лицензия CCPL).
