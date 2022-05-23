@@ -28,7 +28,7 @@ cd RaccoonAnonymous
 pip3 install -r requirements.txt
 ```
 
-Укажите уникальный URL для системы мониторинга ошибок [Sentry](https://sentry.io), для этого откройте config.py файл и укажите свои данные:
+Укажите уникальный URL для системы мониторинга ошибок [Sentry](https://sentry.io), для этого откройте config.py файл и введите свои данные:
 ```
 URL_SENTRY = "Ваш URL"
 ```
