@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=True, default='Здесь рассказ о себе (но мне лень его менять)!')
     warn = db.Column(db.Integer, default=0)
-    admin_status = db.Column(db.Boolean, default=False)
+    admin_status = db.Column(db.Boolean, default=False)  # False - простой пользователь, True - админ
     banned = db.relationship('BanUser', backref='user')
     muted = db.relationship('MuteUser', backref='user')
     email = db.Column(db.Text, unique=True, nullable=True)
@@ -71,7 +71,7 @@ class User(db.Model, UserMixin):
         email = email or None
 
         new_user = User(email=email, name=name,
-                        password=generate_password_hash(password, method='sha512'))  # Создание нового пользователя
+                        password=generate_password_hash(password, method='sha512'))  # Создание нового пользователя, шифрование sha-512
 
         db.session.add(new_user)
         db.session.commit()
@@ -86,6 +86,7 @@ class User(db.Model, UserMixin):
 
 
 class Message(db.Model):
+    """ Сообщение из комнаты. """
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
     text = db.Column(db.String(2500), nullable=False)
@@ -131,6 +132,7 @@ class RoomBan(db.Model):
 
 
 class Complaint(db.Model):
+    """ Жалоба на сообщение. """
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(32), nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
@@ -140,6 +142,7 @@ class Complaint(db.Model):
 
 
 class PrivateMessage(db.Model):
+    """ Личное сообщение. """
     id = db.Column(db.Integer, primary_key=True)
     login1 = db.Column(db.String(32), nullable=False)
     login2 = db.Column(db.String(32), nullable=False)
