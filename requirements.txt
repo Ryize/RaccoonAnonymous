@@ -1,7 +1,7 @@
 alembic==1.7.7
 bidict==0.21.4
 captcha==0.4
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.12
 click==8.0.4
 dataclasses==0.6
