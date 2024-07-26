@@ -33,7 +33,7 @@ pip3 install -r requirements.txt
 URL_SENTRY = "Ваш URL"
 ```
 
-Запустите сервер:
+Запустите проект:
 ```
 python3 app.py
 ```
